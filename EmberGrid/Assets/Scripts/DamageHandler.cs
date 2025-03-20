@@ -39,14 +39,14 @@ public class DamageHandler
                 final += baseAmount * (item - 1);
             }
         }
-        return Mathf.RoundToInt(final);
+        return Mathf.RoundToInt(Mathf.Clamp(final, 0, int.MaxValue));
     }
-
-
 }
 public enum DamageType
 {
-    Physical,
+    Piercing,
+    Slashing,
+    Bludgeoning,
     Fire,
     Cold,
     Electric,

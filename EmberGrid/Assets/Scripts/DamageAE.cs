@@ -7,10 +7,15 @@ public class DamageAE : ActionEffect
 {
     [SerializeField] private DamageType type;
     [SerializeField] private int baseDamage;
-
+    [SerializeField] private BaseStat[] scaleStats;
     public override void InvokeEffect(Unit target, Unit User)
     {
-        target.Damageable.TakeDamage(new DamageHandler(type, baseDamage), User);
+        DamageHandler dmg = new DamageHandler(type, baseDamage);
+        foreach (BaseStat stat in scaleStats)
+        {
+            dmg.AddMod(User.Stats.GetStatMod(stat));
+        }
+        target.Damageable.TakeDamage(dmg, User);
     }
 
 }

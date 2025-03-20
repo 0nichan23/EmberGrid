@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Testing
   m_EditorClassIdentifier: 
   maxHealth: 65
-  might: 4
-  finesse: 5
-  magic: 8
-  resilience: 5
-  resistance: 11
-  willpower: 4
+  might: 20
+  finesse: 20
+  magic: 20
+  resilience: 20
+  resistance: 20
+  willpower: 20

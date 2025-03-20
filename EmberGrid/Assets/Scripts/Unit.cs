@@ -21,23 +21,13 @@ public class Unit : MonoBehaviour
     {
         stats = new UnitStats(baseStats);
         damageable = new Damageable(this, baseStats.MaxHealth);
-        TestFireDamageIncrease();
     }
 
-    [ContextMenu("Test attacking")]
-    public void TestAttack()
-    {
-        testTarget.damageable.GetHit(testAction, this);
-    }
 
-    public void TestFireDamageIncrease()
+    [ContextMenu("TestDamage")]
+    public void TestDamage()
     {
-        dealer.OnDealDamage.AddListener(AddFireDamage);
-    }
-
-    private void AddFireDamage(DamageHandler handler, DamageDealer delaer, Damageable target)
-    {
-        handler.AddMod(1.75f);
+        testTarget.Damageable.GetHit(testAction, this);
     }
 
 }
