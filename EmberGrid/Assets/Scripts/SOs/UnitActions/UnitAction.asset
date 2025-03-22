@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: UnitAction
   m_EditorClassIdentifier: 
   cost: 10
-  actionType: 1
+  actionType: 0
   effects:
   - {fileID: 11400000, guid: 4b97fef097d638748898666dfa1aac3c, type: 2}
+  targets: []

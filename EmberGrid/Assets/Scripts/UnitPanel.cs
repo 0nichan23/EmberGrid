@@ -36,9 +36,11 @@ public class UnitPanel : MonoBehaviour
         resilianceStat.text = givenUnit.Stats.Resilience.ToString();
         resistanceStat.text = givenUnit.Stats.Resistance.ToString();
         willpowerStat.text = givenUnit.Stats.Willpower.ToString();
-        critChance.text = givenUnit.Stats.CritHit.ToString("F1");
-        physicalDefence.text = givenUnit.Stats.PhysicalDefence.ToString("F1");
-        magicalDefence.text = givenUnit.Stats.MagicDefence.ToString("F1");
+
+        basicAttackDamage.text = givenUnit.WeaponHandler.GetBasicAttackDamage().ToString();
+        critChance.text = givenUnit.Stats.CritHit.ToString("F1")+"%";
+        physicalDefence.text = givenUnit.Stats.PhysicalDefenceT.ToString("F0");
+        magicalDefence.text = givenUnit.Stats.MagicDefenceT.ToString("F0");
 
         gameObject.SetActive(true);
     }

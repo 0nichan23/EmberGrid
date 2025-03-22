@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "AE/Damage", fileName = "DamageEffect")]
@@ -13,9 +11,20 @@ public class DamageAE : ActionEffect
         DamageHandler dmg = new DamageHandler(type, baseDamage);
         foreach (BaseStat stat in scaleStats)
         {
-            dmg.AddMod(User.Stats.GetStatMod(stat));
+            dmg.AddModFlat(User.Stats.GetStatFlatMod(stat));
         }
+        dmg.AddModFlat(User.Stats.GetDamageSpecificResistance(type) * -1);
+        dmg.AddModFlat(User.Stats.GetDamageReductionStat(type) * -1);
+
         target.Damageable.TakeDamage(dmg, User);
     }
-
+    public int GetDamageFromUnit(Unit User)
+    {
+        int total = baseDamage;
+        foreach (BaseStat stat in scaleStats)
+        {
+            total += User.Stats.GetStatFlatMod(stat);
+        }
+        return total;
+    }
 }

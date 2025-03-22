@@ -7,7 +7,7 @@ public class DamageHandler
     private int baseAmount;
 
     private List<float> mods = new List<float>();
-
+    private List<int> flatMods = new List<int>();
 
     public DamageHandler(DamageType type, int baseDamage)
     {
@@ -20,9 +20,38 @@ public class DamageHandler
         mods.Add(mod);
     }
 
+    public void AddModFlat(int mod)
+    {
+        if (mod == 0)
+            return;
+
+
+        flatMods.Add(mod);
+    }
+
     public int GetFinalDamage()
     {
         float final = baseAmount;
+        
+        foreach (var mod in flatMods)
+        {
+            if (mod > 0)
+            {
+                final += mod;
+            }
+            else
+            {
+                final -= (mod * -1);
+            }
+
+            final = Mathf.Clamp(final, 0, int.MaxValue);
+        }
+
+        if (final <= 0)
+        {
+            return 0;
+        }
+
 
         foreach (var item in mods)
         {

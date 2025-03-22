@@ -1,27 +1,42 @@
-using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
 public class UnitStats
 {
-    [SerializeField] private StatData might; //damage with heavy melee weapons, access to more powerful melee weapons
+    [SerializeField] private StatData might; //damage with heavy melee weapons, 
     [SerializeField] private StatData finesse; //damage with light melee weapons and ranged weapons, critical hit rate
     [SerializeField] private StatData magic;//damage with all magical attacks
     [SerializeField] private StatData resilience;//damage reduction against all physical attacks
     [SerializeField] private StatData resistance;//damage reduction against all magical attacks
     [SerializeField] private StatData willpower;//more mana for casters, durabilty bonus for martials
-                                                                                            
-    public int Might { get => Mathf.Clamp(might.value, 1, 20); set => might.value = value; }
-    public int Finesse { get => Mathf.Clamp(finesse.value, 1, 20); set => finesse.value = value; }
-    public int Magic { get => Mathf.Clamp(magic.value, 1, 20); set => magic.value = value; }
-    public int Resilience { get => Mathf.Clamp(resilience.value, 1, 20); set => resilience.value = value; }
-    public int Resistance { get => Mathf.Clamp(resistance.value, 1, 20); set => resistance.value = value; }
-    public int Willpower { get => Mathf.Clamp(willpower.value, 1, 20); set => willpower.value = value; }
+
+    public int Might { get => might.value; set => might.value = value; }
+    public int Finesse { get => finesse.value; set => finesse.value = value; }
+    public int Magic { get => magic.value; set => magic.value = value; }
+    public int Resilience { get => resilience.value; set => resilience.value = value; }
+    public int Resistance { get => resistance.value; set => resistance.value = value; }
+    public int Willpower { get => willpower.value; set => willpower.value = value; }
 
 
-    public float PhysicalDefence => 1 - GetStatMod(BaseStat.Resilience);
-    public float MagicDefence => 1 - GetStatMod(BaseStat.Resistance);
-    public float CritHit => 60 * ((float)Finesse / 20);
+    private int physicalDefEx;
+    private int magicalDefEx;
+    private int criticalHitEx;
+    private int damageBonusEx;
+
+    //specific defences
+
+    private Dictionary<DamageType, int> specificResistances = new Dictionary<DamageType, int>();
+
+    public int PhysicalDefenceT => Resilience + magicalDefEx;
+    public int MagicDefenceT => Resistance + magicalDefEx;
+    public float CritHit => Mathf.Clamp((((float)Finesse / 2) + criticalHitEx), 0, 100);
+
+    public int PhysicalDefEx { get => physicalDefEx; set => physicalDefEx = value; }
+    public int MagicalDefEx { get => magicalDefEx; set => magicalDefEx = value; }
+    public int CriticalHitEx { get => criticalHitEx; set => criticalHitEx = value; }
+    public int DamageBonusEx { get => damageBonusEx; set => damageBonusEx = value; }
+    public Dictionary<DamageType, int> SpecificResistances { get => specificResistances; }
 
     public UnitStats(BaseStats givenBaseStats)
     {
@@ -45,6 +60,66 @@ public class UnitStats
 
     }
 
+
+    public void AddSpecificDamageResistance(DamageType type, int amount)
+    {
+        if (specificResistances.ContainsKey(type))
+        {
+            specificResistances[type] += amount;
+        }
+        else
+        {
+            specificResistances.Add(type, amount);
+        }
+    }
+
+    public int GetDamageSpecificResistance(DamageType type)
+    {
+        if (specificResistances.ContainsKey(type))
+        {
+            return specificResistances[type];
+        }
+        return 0;
+    }
+
+    public int GetDamageReductionStat(DamageType type)
+    {
+        switch (type)
+        {
+            case DamageType.Piercing:
+                return PhysicalDefenceT;
+
+            case DamageType.Slashing:
+                return PhysicalDefenceT;
+
+            case DamageType.Bludgeoning:
+                return PhysicalDefenceT;
+
+            case DamageType.Fire:
+                return MagicDefenceT;
+
+            case DamageType.Cold:
+                return MagicDefenceT;
+
+            case DamageType.Electric:
+                return MagicDefenceT;
+
+            case DamageType.Acid:
+                return MagicDefenceT;
+
+            case DamageType.Poison:
+                return MagicDefenceT;
+
+            case DamageType.Necrotic:
+                return MagicDefenceT;
+
+            case DamageType.Radiant:
+                return MagicDefenceT;
+        }
+        return 0;
+    }
+
+    
 
     public int GetStat(BaseStat stat)
     {
@@ -78,14 +153,37 @@ public class UnitStats
             case BaseStat.Magic:
                 return CalcStatMod(150, Magic);
             case BaseStat.Resilience:
-                return CalcStatDec(70, Resilience);
+                return CalcStatDec(75, Resilience);
             case BaseStat.Resistance:
-                return CalcStatDec(70, Resistance);
+                return CalcStatDec(75, Resistance);
             case BaseStat.Willpower:
                 return CalcStatMod(200, Willpower);
         }
         return 0;
     }
+
+
+
+    public int GetStatFlatMod(BaseStat stat)
+    {
+        switch (stat)
+        {
+            case BaseStat.Might:
+                return Might;
+            case BaseStat.Finesse:
+                return Finesse;
+            case BaseStat.Magic:
+                return Magic;
+            case BaseStat.Resilience:
+                return Resilience;
+            case BaseStat.Resistance:
+                return Resistance;
+            case BaseStat.Willpower:
+                return Willpower;
+        }
+        return 0;
+    }
+
 
     private float CalcStatMod(float maximumBonus, int value)
     {
@@ -108,6 +206,7 @@ public struct StatData
     public int value;
 }
 
+
 public enum BaseStat
 {
     Might,
@@ -117,3 +216,4 @@ public enum BaseStat
     Resistance,
     Willpower
 }
+
