@@ -36,5 +36,10 @@ public class WeaponHandler
         return total;
     }
 
+    public void Attack(UnitAction action)
+    {
+        GameManager.Instance.GridBuilder.HitTiles(owner, action);
+    }
+
 
 }

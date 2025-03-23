@@ -16,6 +16,6 @@ MonoBehaviour:
   might: 20
   finesse: 9
   magic: 10
-  resilience: 10
+  resilience: 1
   resistance: 6
   willpower: 6

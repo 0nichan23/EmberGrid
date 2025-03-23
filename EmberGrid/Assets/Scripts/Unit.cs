@@ -7,15 +7,16 @@ public class Unit : MonoBehaviour
     [SerializeField] private Damageable damageable;
     [SerializeField] private DamageDealer dealer;
     [SerializeField] private WeaponHandler weaponHandler;
+    [SerializeField] private UnitMovement movement;
 
     [SerializeField] private Weapon testWeapon;
-    [SerializeField] private Unit testTarget;
 
     public DamageDealer Dealer { get => dealer; }
     public Damageable Damageable { get => damageable; }
     public UnitStats Stats { get => stats; }
     public BaseStats BaseStats { get => baseStats; }
     public WeaponHandler WeaponHandler { get => weaponHandler; }
+    public UnitMovement Movement { get => movement; }
 
     private void Start()
     {
@@ -24,5 +25,10 @@ public class Unit : MonoBehaviour
         weaponHandler = new WeaponHandler(this, testWeapon);
     }
 
+    [ContextMenu("TestAttack")]
+    public void TestAttack()
+    {
+        WeaponHandler.Attack(weaponHandler.Weapon.BasicAttack);
+    }
 
 }

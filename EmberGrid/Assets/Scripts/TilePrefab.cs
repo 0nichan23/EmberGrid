@@ -1,5 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -17,6 +17,8 @@ public class TilePrefab : MonoBehaviour
     //<Unit>
     private Color startcolor;
 
+    public SpriteRenderer SpriteRenderer { get => spriteRenderer; }
+
     private void Start()
     {
         startcolor = spriteRenderer.color;
@@ -32,4 +34,25 @@ public class TilePrefab : MonoBehaviour
         spriteRenderer.color = startcolor;
         Debug.Log(gameObject.name);
     }
+
+
+    public void RedBlink()
+    {
+        StartCoroutine(BlinkColor(startcolor, Color.red));
+    }
+
+    private IEnumerator BlinkColor(Color start, Color end)
+    {
+        float counter = 0;
+        while (counter < 1)
+        {
+            counter += Time.deltaTime;
+            
+            float t = Mathf.PingPong(counter, 1f);
+            SpriteRenderer.color = Color.Lerp(start, end, t);
+            yield return null;
+        }
+        SpriteRenderer.color = start;
+    }
+
 }
