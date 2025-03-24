@@ -41,6 +41,11 @@ public class TilePrefab : MonoBehaviour
         StartCoroutine(BlinkColor(startcolor, Color.red));
     }
 
+    public void BlackBlink()
+    {
+        StartCoroutine(BlinkColor(startcolor, Color.black));
+    }
+
     private IEnumerator BlinkColor(Color start, Color end)
     {
         float counter = 0;

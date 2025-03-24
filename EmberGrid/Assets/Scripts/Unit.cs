@@ -1,7 +1,10 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Unit : MonoBehaviour
 {
+    public UnityEvent OnSelected;
+
     [SerializeField] private BaseStats baseStats;
     [SerializeField] private UnitStats stats;
     [SerializeField] private Damageable damageable;
@@ -23,6 +26,14 @@ public class Unit : MonoBehaviour
         stats = new UnitStats(baseStats);
         damageable = new Damageable(this, baseStats.MaxHealth);
         weaponHandler = new WeaponHandler(this, testWeapon);
+        movement = new UnitMovement(4);
+        Events();
+    }
+
+
+    private void Events()
+    {
+        OnSelected.AddListener(movement.DisplayReachableTiles);
     }
 
     [ContextMenu("TestAttack")]

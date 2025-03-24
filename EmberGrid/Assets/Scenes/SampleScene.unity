@@ -391,6 +391,8 @@ MonoBehaviour:
   movement:
     currentTile:
       pos: {x: 0, y: 0}
+      costToEnd: 0
+      costToStart: 0
   testWeapon: {fileID: 11400000, guid: b82cfd5f121a0a040a40938fed7800d9, type: 2}
 --- !u!4 &25619945
 Transform:
@@ -1969,6 +1971,8 @@ MonoBehaviour:
   movement:
     currentTile:
       pos: {x: 0, y: 0}
+      costToEnd: 0
+      costToStart: 0
   testWeapon: {fileID: 11400000, guid: b82cfd5f121a0a040a40938fed7800d9, type: 2}
 --- !u!4 &544783402
 Transform:
@@ -2238,7 +2242,6 @@ MonoBehaviour:
   tiles:
   - {fileID: 11400000, guid: 3e12bfba06e132f42878ee57c2ad43c1, type: 2}
   - {fileID: 11400000, guid: be9fc658a6fa7914e9daf2e0434ffe1a, type: 2}
-  - {fileID: 11400000, guid: 32845c605bdade54690636b5c963ecce, type: 2}
   - {fileID: 11400000, guid: 13d61784851d6264db80c973a2b4a621, type: 2}
   tempStartUnit: {fileID: 25619944}
   tempStartUnit2: {fileID: 544783401}

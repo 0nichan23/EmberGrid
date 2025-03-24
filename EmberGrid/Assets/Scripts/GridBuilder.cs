@@ -14,17 +14,23 @@ public class GridBuilder : MonoBehaviour
     [SerializeField] private Unit tempStartUnit;
     [SerializeField] private Unit tempStartUnit2;
 
+    private Pathfinder pathfinder;
+
+
 
     private Dictionary<Vector2Int, TileSD> tileDictionary = new Dictionary<Vector2Int, TileSD>();
+    private Dictionary<Vector2Int, TileSD> walkableDictionary = new Dictionary<Vector2Int, TileSD>();
 
     public Dictionary<Vector2Int, TileSD> TileDictionary { get => tileDictionary; }
+    public Dictionary<Vector2Int, TileSD> WalkableDictionary { get => walkableDictionary;}
+    public Pathfinder Pathfinder { get => pathfinder; }
 
     private void Start()
     {
         Application.targetFrameRate = 120;
         GenerateGrid();
         PlaceTempUnit();
-
+        pathfinder = new Pathfinder();
     }
     void GenerateGrid()
     {
@@ -40,18 +46,23 @@ public class GridBuilder : MonoBehaviour
                 {
                     TilePrefab tilePrefab = Instantiate(tile.Prefab, tilemap.CellToWorld(tilePosition), Quaternion.identity);
                     tilePrefab.transform.SetParent(tilemap.transform);
-                    tileDictionary.Add(new Vector2Int(x, y), new TileSD(tilePrefab, (Vector2Int)tilePosition));
+                    TileSD tilesd = new TileSD(tilePrefab, (Vector2Int)tilePosition);
+                    tileDictionary.Add(new Vector2Int(x, y), tilesd);
+                    if (tilePrefab.gameObject.CompareTag("Ground"))
+                    {
+                        walkableDictionary.Add(new Vector2Int(x, y), tilesd);
+                    }
                 }
             }
         }
     }
 
 
-    public TileSD GetTileFromPosition(Vector2Int pos)
+    public TileSD GetTileFromPosition(Vector2Int pos, Dictionary<Vector2Int, TileSD> map = null)
     {
-        if (tileDictionary.ContainsKey(pos))
+        if (map.ContainsKey(pos))
         {
-            return TileDictionary[pos];
+            return map[pos];
         }
         else
         {
@@ -66,7 +77,7 @@ public class GridBuilder : MonoBehaviour
 
         foreach (var target in action.Targets)
         {
-            TileSD currentTile = GetTileFromPosition(userTilePos + target);
+            TileSD currentTile = GetTileFromPosition(userTilePos + target, tileDictionary);
             if (!ReferenceEquals(currentTile, null))
             {
                 tilemap.SetColor((Vector3Int)userTilePos, Color.red);
@@ -75,34 +86,86 @@ public class GridBuilder : MonoBehaviour
         }
     }
 
+    public List<TileSD> GetNeighbours(TileSD tile, Dictionary<Vector2Int, TileSD> map)
+    {
+        List<TileSD> neighbours = new List<TileSD>();
+
+        TileSD tileN = GetTileFromPosition(tile.Pos + new Vector2Int(1, 0), map);
+        if (!ReferenceEquals(tileN, null))
+        {
+            neighbours.Add(tileN);
+        }
+        tileN = GetTileFromPosition(tile.Pos + new Vector2Int(-1, 0), map);
+        if (!ReferenceEquals(tileN, null))
+        {
+            neighbours.Add(tileN);
+        }
+        tileN = GetTileFromPosition(tile.Pos + new Vector2Int(0, 1), map);
+        if (!ReferenceEquals(tileN, null))
+        {
+            neighbours.Add(tileN);
+        }
+        tileN = GetTileFromPosition(tile.Pos + new Vector2Int(0, -1), map);
+        if (!ReferenceEquals(tileN, null))
+        {
+            neighbours.Add(tileN);
+        }
+        return neighbours;
+    }
+
     private void PlaceTempUnit()
     {
-        TileSD tile = GetTileFromPosition(new Vector2Int(width / 2, height / 2));
+        TileSD tile = GetTileFromPosition(new Vector2Int(width / 2, height / 2), walkableDictionary);
         if (tile != null)
         {
             tile.SubUnit(tempStartUnit);
             tempStartUnit.transform.position = new Vector3Int(tile.Pos.x, tile.Pos.y, 0);
         }
-        TileSD tile2 = GetTileFromPosition(tempStartUnit.Movement.CurrentTile.Pos + new Vector2Int(1, 0));
+        TileSD tile2 = GetTileFromPosition(tempStartUnit.Movement.CurrentTile.Pos + new Vector2Int(1, 0), tileDictionary);
         if (tile2 != null)
         {
             tile2.SubUnit(tempStartUnit2);
             tempStartUnit2.transform.position = new Vector3Int(tile2.Pos.x, tile2.Pos.y, 0);
         }
     }
+
+
+    [ContextMenu("Test path")]
+    public void TestPath()
+    {
+       List<TileSD> foundPath =  pathfinder.FindPathToDest(tempStartUnit.Movement.CurrentTile, GetTileFromPosition(new Vector2Int(0, 0), tileDictionary), walkableDictionary);
+
+        if (ReferenceEquals(foundPath, null))
+        {
+            Debug.Log("Path unreachable");
+            return;
+        }
+        foreach (TileSD tile in foundPath)
+        {
+            tile.BlackBlink();
+        }
+    }
 }
 
 [System.Serializable]
-public class TileSD
+public class TileSD : IHeapItem<TileSD>
 {
     private TilePrefab refTile;
     private Unit subscribedUnit;
     [SerializeField] private Vector2Int pos;
     //to physically position a unit on a tile simply use the position as a v3int 
+    public TileSD PathParent;
+    private int heapIndex;
+    public int costToEnd;
+    public int costToStart;
+    public int totalCost => costToEnd + costToStart;
+
+    public bool Occupied => subscribedUnit != null;
 
     public TilePrefab RefTile { get => refTile; }
     public Unit SubscribedUnit { get => subscribedUnit; }
     public Vector2Int Pos { get => pos; }
+    public int HeapIndex { get => heapIndex; set => heapIndex = value; }
 
     public TileSD(TilePrefab tile, Vector2Int pos)
     {
@@ -131,4 +194,19 @@ public class TileSD
         }
     }
 
+    public void BlackBlink()
+    {
+        refTile.BlackBlink();
+    }
+
+
+    public int CompareTo(TileSD other)
+    {
+        int compare = totalCost.CompareTo(other.totalCost);
+        if (compare == 0)
+        {
+            compare = costToEnd.CompareTo(other.costToEnd);
+        }
+        return -compare;
+    }
 }

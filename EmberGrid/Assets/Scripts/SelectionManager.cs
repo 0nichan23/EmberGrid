@@ -15,6 +15,7 @@ public class SelectionManager : MonoBehaviour
         selectedUnit = givenUnit;
 
         OnSelectUnit?.Invoke(selectedUnit);
+        selectedUnit.OnSelected?.Invoke();
     }
 
 }
