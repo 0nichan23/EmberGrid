@@ -130,7 +130,7 @@ public class GridBuilder : MonoBehaviour
     }
 
 
-    [ContextMenu("Test path")]
+   /* [ContextMenu("Test path")]
     public void TestPath()
     {
        List<TileSD> foundPath =  pathfinder.FindPathToDest(tempStartUnit.Movement.CurrentTile, GetTileFromPosition(new Vector2Int(0, 0), tileDictionary), walkableDictionary);
@@ -142,9 +142,9 @@ public class GridBuilder : MonoBehaviour
         }
         foreach (TileSD tile in foundPath)
         {
-            tile.BlackBlink();
+            tile.MoveOverlay();
         }
-    }
+    }*/
 }
 
 [System.Serializable]
@@ -171,6 +171,7 @@ public class TileSD : IHeapItem<TileSD>
     {
         refTile = tile;
         this.pos = pos;
+        tile.CacheSD(this);
     }
 
     public void SubUnit(Unit subscribedUnit)
@@ -194,11 +195,15 @@ public class TileSD : IHeapItem<TileSD>
         }
     }
 
-    public void BlackBlink()
+    public void MoveOverlay()
     {
-        refTile.BlackBlink();
+        refTile.SetMoveOverlay();
     }
 
+    public void ResetOverlay()
+    {
+        RefTile.ResetOverlay();
+    }
 
     public int CompareTo(TileSD other)
     {

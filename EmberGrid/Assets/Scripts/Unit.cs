@@ -11,7 +11,6 @@ public class Unit : MonoBehaviour
     [SerializeField] private DamageDealer dealer;
     [SerializeField] private WeaponHandler weaponHandler;
     [SerializeField] private UnitMovement movement;
-
     [SerializeField] private Weapon testWeapon;
 
     public DamageDealer Dealer { get => dealer; }
@@ -26,14 +25,13 @@ public class Unit : MonoBehaviour
         stats = new UnitStats(baseStats);
         damageable = new Damageable(this, baseStats.MaxHealth);
         weaponHandler = new WeaponHandler(this, testWeapon);
-        movement = new UnitMovement(4);
+        movement = new UnitMovement(this, 4);
         Events();
     }
 
-
     private void Events()
     {
-        OnSelected.AddListener(movement.DisplayReachableTiles);
+        OnSelected.AddListener(movement.SetReachableTiles);
     }
 
     [ContextMenu("TestAttack")]

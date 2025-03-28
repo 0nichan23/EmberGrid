@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [System.Serializable]
@@ -7,15 +6,19 @@ public class UnitMovement
 {
     [SerializeField] private TileSD currentTile;
     [SerializeField] private int speed;//tiles per round
+    private TileSD[] currentReach;
+    private Unit owner;
     public TileSD CurrentTile { get => currentTile; set => currentTile = value; }
     public int Speed { get => speed; set => speed = value; }
+    public Unit Owner { get => owner; }
 
-    public UnitMovement(int speed)
+    public UnitMovement(Unit givenOwner, int speed)
     {
+        owner = givenOwner;
         this.speed = speed;
     }
 
-    public void DisplayReachableTiles()
+    public void SetReachableTiles()
     {
         List<TileSD> reachables = new List<TileSD>();
 
@@ -29,7 +32,7 @@ public class UnitMovement
                     continue;
 
                 TileSD reach = GameManager.Instance.GridBuilder.GetTileFromPosition(pos, GameManager.Instance.GridBuilder.WalkableDictionary);
-                if (reach != null)
+                if (reach != null && !reach.Occupied)
                 {
                     reachables.Add(reach);
                 }
@@ -50,8 +53,28 @@ public class UnitMovement
 
         foreach (var reachable in reachables)
         {
-            reachable.BlackBlink();
+            reachable.MoveOverlay();
+            reachable.RefTile.OnTileClicked.AddListener(MoveUnitToTile);
+        }
+
+        currentReach = reachables.ToArray();
+    }
+
+
+    private void MoveUnitToTile(TileSD tile)
+    {
+        if (!ReferenceEquals(CurrentTile, null))
+        {
+            currentTile.UnSubUnit();
+        }
+        owner.transform.position = new Vector3Int(tile.Pos.x, tile.Pos.y, 0);
+        tile.SubUnit(owner);
+        foreach (var item in currentReach)
+        {
+            item.RefTile.OnTileClicked.RemoveListener(MoveUnitToTile);
+            item.ResetOverlay();
         }
     }
+
 
 }

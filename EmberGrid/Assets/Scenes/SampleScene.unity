@@ -341,6 +341,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff0f2f65c8b489f44ada9ac9f9c3c650, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelected:
+    m_PersistentCalls:
+      m_Calls: []
   baseStats: {fileID: 11400000, guid: 1efb72a2396cc1443b65a554caed2c66, type: 2}
   stats:
     might:
@@ -393,6 +396,7 @@ MonoBehaviour:
       pos: {x: 0, y: 0}
       costToEnd: 0
       costToStart: 0
+    speed: 0
   testWeapon: {fileID: 11400000, guid: b82cfd5f121a0a040a40938fed7800d9, type: 2}
 --- !u!4 &25619945
 Transform:
@@ -1921,6 +1925,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff0f2f65c8b489f44ada9ac9f9c3c650, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSelected:
+    m_PersistentCalls:
+      m_Calls: []
   baseStats: {fileID: 11400000, guid: 1efb72a2396cc1443b65a554caed2c66, type: 2}
   stats:
     might:
@@ -1973,6 +1980,7 @@ MonoBehaviour:
       pos: {x: 0, y: 0}
       costToEnd: 0
       costToStart: 0
+    speed: 0
   testWeapon: {fileID: 11400000, guid: b82cfd5f121a0a040a40938fed7800d9, type: 2}
 --- !u!4 &544783402
 Transform:

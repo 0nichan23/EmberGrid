@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -14,10 +15,17 @@ public class TilePrefab : MonoBehaviour
 
     public UnityEvent OnUnitStep;
     public UnityEvent OnUnitLand;
+    public UnityEvent<TileSD> OnTileClicked;
     //<Unit>
     private Color startcolor;
-
+    private TileSD refTileSD;
     public SpriteRenderer SpriteRenderer { get => spriteRenderer; }
+
+
+    public void CacheSD(TileSD givenSD)
+    {
+        refTileSD = givenSD;
+    }
 
     private void Start()
     {
@@ -27,6 +35,7 @@ public class TilePrefab : MonoBehaviour
     private void OnMouseDown()
     {
         spriteRenderer.color = new Color(startcolor.r, startcolor.g, startcolor.b, 0.33f);
+        OnTileClicked?.Invoke(refTileSD);
     }
 
     private void OnMouseUp()
@@ -60,4 +69,13 @@ public class TilePrefab : MonoBehaviour
         SpriteRenderer.color = start;
     }
 
+    public void SetMoveOverlay()
+    {
+        SpriteRenderer.color = Color.black;
+    }
+
+    public void ResetOverlay()
+    {
+        SpriteRenderer.color = startcolor;
+    }
 }
