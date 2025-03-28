@@ -187,7 +187,7 @@ public class TileSD : IHeapItem<TileSD>
 
     public void HitTile(Unit user, UnitAction action)
     {
-        Debug.Log($"{pos} was hit by {user}");
+        //Debug.Log($"{pos} was hit by {user}");
         refTile.RedBlink();
         if (!ReferenceEquals(subscribedUnit, null))
         {

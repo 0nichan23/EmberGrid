@@ -2245,8 +2245,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tilemap: {fileID: 540114909}
-  width: 10
-  height: 10
+  width: 20
+  height: 20
   tiles:
   - {fileID: 11400000, guid: 3e12bfba06e132f42878ee57c2ad43c1, type: 2}
   - {fileID: 11400000, guid: be9fc658a6fa7914e9daf2e0434ffe1a, type: 2}
