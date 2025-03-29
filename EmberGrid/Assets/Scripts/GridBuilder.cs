@@ -70,7 +70,7 @@ public class GridBuilder : MonoBehaviour
         }
     }
 
-
+    //use this for hitbox based attacks 
     public void HitTiles(Unit user, UnitAction action)
     {
         Vector2Int userTilePos = user.Movement.CurrentTile.Pos;
@@ -80,11 +80,49 @@ public class GridBuilder : MonoBehaviour
             TileSD currentTile = GetTileFromPosition(userTilePos + target, tileDictionary);
             if (!ReferenceEquals(currentTile, null))
             {
-                tilemap.SetColor((Vector3Int)userTilePos, Color.red);
                 currentTile.HitTile(user, action);
             }
         }
     }
+
+    //attack the tile directly for targeted attacks 
+    public void HitTiles(Unit user, UnitAction action, TileSD sourceTile)
+    {
+        Vector2Int userTilePos = user.Movement.CurrentTile.Pos;
+
+        foreach (var target in action.Targets)
+        {
+            TileSD currentTile = GetTileFromPosition(sourceTile.Pos + target, tileDictionary);
+            if (!ReferenceEquals(currentTile, null))
+            {
+                currentTile.HitTile(user, action);
+            }
+        }
+    }
+
+    public TileSD[] GetTilesInReach(TileSD source, int range)
+    {
+        List<TileSD> inReach = new List<TileSD>();
+
+        for (int x = -range; x <= range; x++)
+        {
+            for (int y = -range; y <= range; y++)
+            {
+                Vector2Int pos = new Vector2Int(source.Pos.x + x, source.Pos.y + y);
+
+                if (Pathfinder.GetDistanceOfTiles(source.Pos, pos) > range)
+                    continue;
+
+                TileSD reach = GameManager.Instance.GridBuilder.GetTileFromPosition(pos, tileDictionary);
+                if (reach != null)
+                {
+                    inReach.Add(reach);
+                }
+            }
+        }
+        return inReach.ToArray();
+    }
+
 
     public List<TileSD> GetNeighbours(TileSD tile, Dictionary<Vector2Int, TileSD> map)
     {
@@ -113,6 +151,7 @@ public class GridBuilder : MonoBehaviour
         return neighbours;
     }
 
+    //TEMP
     private void PlaceTempUnit()
     {
         TileSD tile = GetTileFromPosition(new Vector2Int(width / 2, height / 2), walkableDictionary);
@@ -198,6 +237,11 @@ public class TileSD : IHeapItem<TileSD>
     public void MoveOverlay()
     {
         refTile.SetMoveOverlay();
+    }
+
+    public void AttackOverlay()
+    {
+        refTile.SetAttackOverlay();
     }
 
     public void ResetOverlay()

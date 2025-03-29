@@ -26,6 +26,7 @@ public class Unit : MonoBehaviour
         damageable = new Damageable(this, baseStats.MaxHealth);
         weaponHandler = new WeaponHandler(this, testWeapon);
         movement = new UnitMovement(this, 4);
+        stats.AddSpecificDamageResistance(DamageType.Slashing, 40);
         Events();
     }
 

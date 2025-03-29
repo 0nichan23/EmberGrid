@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Weapon
   m_EditorClassIdentifier: 
   type: 0
-  basicAttack: {fileID: 11400000, guid: 9046a7acc9ea39e4595f68551a9432f4, type: 2}
+  basicAttack: {fileID: 11400000, guid: 0d11cacf0eebbe247b0304aa6b0eb06a, type: 2}

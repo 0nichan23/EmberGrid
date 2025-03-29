@@ -16,7 +16,6 @@ public class TilePrefab : MonoBehaviour
     public UnityEvent OnUnitStep;
     public UnityEvent OnUnitLand;
     public UnityEvent<TileSD> OnTileClicked;
-    //<Unit>
     private Color startcolor;
     private TileSD refTileSD;
     public SpriteRenderer SpriteRenderer { get => spriteRenderer; }
@@ -73,7 +72,10 @@ public class TilePrefab : MonoBehaviour
     {
         SpriteRenderer.color = Color.black;
     }
-
+    public void SetAttackOverlay()
+    {
+        SpriteRenderer.color = Color.cyan;
+    }
     public void ResetOverlay()
     {
         SpriteRenderer.color = startcolor;
