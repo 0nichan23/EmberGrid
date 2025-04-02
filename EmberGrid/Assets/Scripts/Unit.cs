@@ -4,13 +4,16 @@ using UnityEngine.Events;
 public class Unit : MonoBehaviour
 {
     public UnityEvent OnSelected;
+    public UnityEvent OnTurnEnded;
 
+    [SerializeField] private UnitSelector selector;
     [SerializeField] private BaseStats baseStats;
     [SerializeField] private UnitStats stats;
     [SerializeField] private Damageable damageable;
     [SerializeField] private DamageDealer dealer;
     [SerializeField] private WeaponHandler weaponHandler;
     [SerializeField] private UnitMovement movement;
+    [SerializeField] private UnitActionHandler actionHandler;
     [SerializeField] private Weapon testWeapon;
 
     public DamageDealer Dealer { get => dealer; }
@@ -19,6 +22,8 @@ public class Unit : MonoBehaviour
     public BaseStats BaseStats { get => baseStats; }
     public WeaponHandler WeaponHandler { get => weaponHandler; }
     public UnitMovement Movement { get => movement; }
+    public UnitSelector Selector { get => selector; }
+    public UnitActionHandler ActionHandler { get => actionHandler; }
 
     private void Start()
     {
@@ -26,7 +31,7 @@ public class Unit : MonoBehaviour
         damageable = new Damageable(this, baseStats.MaxHealth);
         weaponHandler = new WeaponHandler(this, testWeapon);
         movement = new UnitMovement(this, 4);
-        stats.AddSpecificDamageResistance(DamageType.Slashing, 40);
+        actionHandler = new UnitActionHandler(this);
         Events();
     }
 
@@ -39,6 +44,13 @@ public class Unit : MonoBehaviour
     public void TestAttack()
     {
         WeaponHandler.Attack(weaponHandler.Weapon.BasicAttack);
+    }
+
+
+    [ContextMenu("TestWait")]
+    public void TestWait()
+    {
+        actionHandler.TakeWaitAction();
     }
 
 }

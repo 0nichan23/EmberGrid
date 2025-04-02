@@ -39,6 +39,12 @@ public class WeaponHandler
 
     public void Attack(UnitAction action)
     {
+        if (!owner.ActionHandler.CanTakeAction)
+        {
+            return;
+        }
+
+
         if (!action.Targeted)
         {
             GameManager.Instance.GridBuilder.HitTiles(owner, action);
@@ -50,6 +56,9 @@ public class WeaponHandler
             //open some sort of selection panel.
             //can attack any tile as long as its in range. 
         }
+
+        owner.ActionHandler.ExpandAction();
+
     }
 
 }

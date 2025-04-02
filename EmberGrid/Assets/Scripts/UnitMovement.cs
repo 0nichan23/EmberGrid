@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 [System.Serializable]
 public class UnitMovement
@@ -8,6 +9,7 @@ public class UnitMovement
     [SerializeField] private int speed;//tiles per round
     private TileSD[] currentReach;
     private Unit owner;
+    private int speedLeft;
     public TileSD CurrentTile { get => currentTile; set => currentTile = value; }
     public int Speed { get => speed; set => speed = value; }
     public Unit Owner { get => owner; }
@@ -16,19 +18,26 @@ public class UnitMovement
     {
         owner = givenOwner;
         this.speed = speed;
+        speedLeft = speed;
     }
+
+    public void ResetSpeed()
+    {
+        speedLeft = speed;
+    }
+
 
     public void SetReachableTiles()
     {
         List<TileSD> reachables = new List<TileSD>();
 
-        for (int x = -speed; x <= speed; x++)
+        for (int x = -speedLeft; x <= speedLeft; x++)
         {
-            for (int y = -speed; y <= speed; y++)
+            for (int y = -speedLeft; y <= speedLeft; y++)
             {
                 Vector2Int pos = new Vector2Int(currentTile.Pos.x + x, currentTile.Pos.y + y);
 
-                if (Pathfinder.GetDistanceOfTiles(currentTile.Pos, pos) > speed)
+                if (Pathfinder.GetDistanceOfTiles(currentTile.Pos, pos) > speedLeft)
                     continue;
 
                 TileSD reach = GameManager.Instance.GridBuilder.GetTileFromPosition(pos, GameManager.Instance.GridBuilder.WalkableDictionary);
@@ -45,7 +54,7 @@ public class UnitMovement
             var path = GameManager.Instance.GridBuilder.Pathfinder.FindPathToDest(
                 currentTile, tile, GameManager.Instance.GridBuilder.WalkableDictionary);
 
-            if (path == null || path.Count > speed)
+            if (path == null || path.Count > speedLeft)
             {
                 reachables.RemoveAt(i);
             }
@@ -65,6 +74,8 @@ public class UnitMovement
 
     private void MoveUnitToTile(TileSD tile)
     {
+        speedLeft -= Pathfinder.GetDistanceOfTiles(currentTile.Pos, tile.Pos);
+
         if (!ReferenceEquals(CurrentTile, null))
         {
             currentTile.UnSubUnit();
