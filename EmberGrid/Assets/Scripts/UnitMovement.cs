@@ -19,6 +19,7 @@ public class UnitMovement
         owner = givenOwner;
         this.speed = speed;
         speedLeft = speed;
+        GameManager.Instance.SelectionManager.OnDeselectedUnit.AddListener(CancelSelection);
     }
 
     public void ResetSpeed()
@@ -26,6 +27,19 @@ public class UnitMovement
         speedLeft = speed;
     }
 
+
+    public void CancelSelection(Unit given)
+    {
+        if (ReferenceEquals(given, owner) && !ReferenceEquals(currentReach, null) && currentReach.Length > 0)
+        {
+            foreach (var kvp in currentReach)
+            {
+                kvp.ResetOverlay();
+                kvp.RefTile.OnTileClicked.RemoveListener(MoveUnitToTile);
+            }
+            currentReach = null;
+        }
+    }
 
     public void SetReachableTiles()
     {

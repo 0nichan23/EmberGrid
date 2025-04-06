@@ -1,20 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Weapon", menuName = "Weapon")]
 public class Weapon : ScriptableObject
 {
-    [SerializeField] private WeaponType type;
     [SerializeField] private UnitAction basicAttack;
+    [SerializeField] private UnitAction encounters;
+    [SerializeField] private UnitAction ultimate;
 
-    public UnitAction BasicAttack { get => basicAttack;}
-}
-
-public enum WeaponType
-{
-    HeavyMelee,
-    LightMelee,
-    Ranged, 
-    Implement
+    public UnitAction BasicAttack { get => basicAttack; }
+    public UnitAction Encounters { get => encounters; }
+    public UnitAction Daily { get => ultimate; }
 }

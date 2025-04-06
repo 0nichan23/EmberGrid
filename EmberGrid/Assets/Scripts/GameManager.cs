@@ -18,6 +18,7 @@ public class GameManager : MonoSingleton<GameManager>
     private void Start()
     {
         selectionManager.OnSelectUnit.AddListener(uiManager.OpenUnitPanel);
+        selectionManager.OnDeselectedUnit.AddListener(uiManager.CloseUnitPanel);
 
     }
 }

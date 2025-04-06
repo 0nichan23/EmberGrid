@@ -37,6 +37,7 @@ public class Unit : MonoBehaviour
 
     private void Events()
     {
+        OnTurnEnded.AddListener(() => GameManager.Instance.SelectionManager.SelectUnit(null));
         OnSelected.AddListener(movement.SetReachableTiles);
     }
 
