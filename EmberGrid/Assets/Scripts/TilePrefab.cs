@@ -16,6 +16,8 @@ public class TilePrefab : MonoBehaviour
     public UnityEvent OnUnitStep;
     public UnityEvent OnUnitLand;
     public UnityEvent<TileSD> OnTileClicked;
+    public UnityEvent OnTileHovered;
+    public UnityEvent OnTileUnHovered;
     private Color startcolor;
     private TileSD refTileSD;
     public SpriteRenderer SpriteRenderer { get => spriteRenderer; }
@@ -43,6 +45,16 @@ public class TilePrefab : MonoBehaviour
         Debug.Log(gameObject.name);
     }
 
+
+    private void OnMouseEnter()
+    {
+        OnTileHovered?.Invoke();   
+    }
+
+    private void OnMouseExit()
+    {
+        OnTileUnHovered?.Invoke();
+    }
 
     public void RedBlink()
     {
@@ -76,6 +88,12 @@ public class TilePrefab : MonoBehaviour
     {
         SpriteRenderer.color = Color.cyan;
     }
+
+    public void TargetOverlay()
+    {
+        SpriteRenderer.color = Color.magenta;
+    }
+
     public void ResetOverlay()
     {
         SpriteRenderer.color = startcolor;

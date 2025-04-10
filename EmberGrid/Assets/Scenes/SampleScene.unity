@@ -4460,6 +4460,9 @@ MonoBehaviour:
   OnSelectUnit:
     m_PersistentCalls:
       m_Calls: []
+  OnDeselectedUnit:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1520176847
 GameObject:
   m_ObjectHideFlags: 0

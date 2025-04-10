@@ -242,10 +242,14 @@ public class TileSD : IHeapItem<TileSD>
     public void AttackOverlay()
     {
         refTile.SetAttackOverlay();
+        RefTile.OnTileHovered.AddListener(refTile.TargetOverlay);
+        RefTile.OnTileHovered.AddListener(refTile.SetAttackOverlay);
     }
 
     public void ResetOverlay()
     {
+        RefTile.OnTileHovered.RemoveListener(refTile.TargetOverlay);
+        RefTile.OnTileHovered.RemoveListener(refTile.SetAttackOverlay);
         RefTile.ResetOverlay();
     }
 
