@@ -15,10 +15,4 @@ public class GameManager : MonoSingleton<GameManager>
     public PlayerManager PlayerManager { get => playerManager; }
     public TurnManager TurnManager { get => turnManager; }
 
-    private void Start()
-    {
-        selectionManager.OnSelectUnit.AddListener(uiManager.OpenUnitPanel);
-        selectionManager.OnDeselectedUnit.AddListener(uiManager.CloseUnitPanel);
-
-    }
 }

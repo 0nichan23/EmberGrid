@@ -12,7 +12,6 @@ public class GridBuilder : MonoBehaviour
     [SerializeField] private CustomTile[] tiles;
 
     [SerializeField] private Unit tempStartUnit;
-    [SerializeField] private Unit tempStartUnit2;
 
     private Pathfinder pathfinder;
 
@@ -160,12 +159,6 @@ public class GridBuilder : MonoBehaviour
             tile.SubUnit(tempStartUnit);
             tempStartUnit.transform.position = new Vector3Int(tile.Pos.x, tile.Pos.y, 0);
         }
-        TileSD tile2 = GetTileFromPosition(tempStartUnit.Movement.CurrentTile.Pos + new Vector2Int(1, 0), tileDictionary);
-        if (tile2 != null)
-        {
-            tile2.SubUnit(tempStartUnit2);
-            tempStartUnit2.transform.position = new Vector3Int(tile2.Pos.x, tile2.Pos.y, 0);
-        }
     }
 
 
@@ -236,20 +229,16 @@ public class TileSD : IHeapItem<TileSD>
 
     public void MoveOverlay()
     {
-        refTile.SetMoveOverlay();
+        refTile.SetMoveMode();
     }
 
     public void AttackOverlay()
     {
-        refTile.SetAttackOverlay();
-        RefTile.OnTileHovered.AddListener(refTile.TargetOverlay);
-        RefTile.OnTileHovered.AddListener(refTile.SetAttackOverlay);
+        refTile.SetAttackMode();
     }
 
     public void ResetOverlay()
     {
-        RefTile.OnTileHovered.RemoveListener(refTile.TargetOverlay);
-        RefTile.OnTileHovered.RemoveListener(refTile.SetAttackOverlay);
         RefTile.ResetOverlay();
     }
 

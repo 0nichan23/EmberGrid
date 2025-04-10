@@ -4,6 +4,7 @@ using UnityEngine.Events;
 public class Unit : MonoBehaviour
 {
     public UnityEvent OnSelected;
+    public UnityEvent OnDeselected;
     public UnityEvent OnTurnEnded;
 
     [SerializeField] private UnitSelector selector;
@@ -25,7 +26,7 @@ public class Unit : MonoBehaviour
     public UnitSelector Selector { get => selector; }
     public UnitActionHandler ActionHandler { get => actionHandler; }
 
-    private void Start()
+    protected virtual void Start()
     {
         stats = new UnitStats(baseStats);
         damageable = new Damageable(this, baseStats.MaxHealth);
@@ -35,7 +36,7 @@ public class Unit : MonoBehaviour
         Events();
     }
 
-    private void Events()
+    protected virtual void Events()
     {
         OnTurnEnded.AddListener(() => GameManager.Instance.SelectionManager.SelectUnit(null));
         OnSelected.AddListener(movement.SetReachableTiles);

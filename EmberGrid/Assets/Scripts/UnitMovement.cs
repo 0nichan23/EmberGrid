@@ -19,7 +19,7 @@ public class UnitMovement
         owner = givenOwner;
         this.speed = speed;
         speedLeft = speed;
-        GameManager.Instance.SelectionManager.OnDeselectedUnit.AddListener(CancelSelection);
+        givenOwner.OnDeselected.AddListener(CancelSelection);
     }
 
     public void ResetSpeed()
@@ -28,9 +28,9 @@ public class UnitMovement
     }
 
 
-    public void CancelSelection(Unit given)
+    public void CancelSelection()
     {
-        if (ReferenceEquals(given, owner) && !ReferenceEquals(currentReach, null) && currentReach.Length > 0)
+        if (!ReferenceEquals(currentReach, null) && currentReach.Length > 0)
         {
             foreach (var kvp in currentReach)
             {

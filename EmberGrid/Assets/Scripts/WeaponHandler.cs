@@ -44,21 +44,25 @@ public class WeaponHandler
             return;
         }
 
+        owner.Movement.CancelSelection();
 
         if (!action.Targeted)
         {
             GameManager.Instance.GridBuilder.HitTiles(owner, action);
+            //set cancel 
         }
         else
         {
             TileSD[] reach = GameManager.Instance.GridBuilder.GetTilesInReach(owner.Movement.CurrentTile, action.Range);
             TargetedActionData targetData = new TargetedActionData(reach, action, owner);
+            //set cancel
             //open some sort of selection panel.
             //can attack any tile as long as its in range. 
         }
 
-        owner.ActionHandler.ExpandAction();
-
+       // owner.ActionHandler.ExpandAction();
+       //expand action only after a tile/ direction is clicked.
+       //cancel movemnt when attack button is clicked.
     }
 
 }

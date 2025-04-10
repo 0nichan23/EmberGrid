@@ -5,10 +5,10 @@ using UnityEngine;
 public class UIManager : MonoBehaviour
 {
     [SerializeField] private UnitPanel unitPanel;
-    [SerializeField] private GameObject ActionBar;
+    [SerializeField] private ActionBar actionBar;
 
     public UnitPanel UnitPanel { get => unitPanel;}
-    public GameObject ActionBar1 { get => ActionBar; }
+    public ActionBar ActionBar { get => actionBar; }
 
     public void OpenUnitPanel(Unit givenUnit)
     {

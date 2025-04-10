@@ -145,6 +145,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 1401914386688673124}
+  moveColor: {r: 0.15726236, g: 0.20267205, b: 0.5849056, a: 0.8666667}
+  attackRangeColor: {r: 1, g: 0, b: 0, a: 0.78039217}
+  attackTargetColor: {r: 0.41509432, g: 0.10377358, b: 0.3456631, a: 0.84313726}
   OnUnitStep:
     m_PersistentCalls:
       m_Calls: []
@@ -155,6 +158,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   OnTileHovered:
+    m_PersistentCalls:
+      m_Calls: []
+  OnTileUnHovered:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &8136017381857951552
@@ -229,7 +235,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 12
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_FlipX: 0

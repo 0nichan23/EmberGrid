@@ -11,8 +11,6 @@ public class ActionBar : MonoBehaviour
 
     private void Start()
     {
-        GameManager.Instance.SelectionManager.OnSelectUnit.AddListener(Setup);
-        GameManager.Instance.SelectionManager.OnDeselectedUnit.AddListener(OnDeselect);
         gameObject.SetActive(false);
     }
 
@@ -22,7 +20,7 @@ public class ActionBar : MonoBehaviour
     }
 
 
-    private void Setup(Unit given)
+    public void Setup(Hero given)
     {
         waitButton.onClick.RemoveAllListeners();
         attackButton.onClick.RemoveAllListeners();

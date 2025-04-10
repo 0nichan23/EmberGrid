@@ -12,6 +12,9 @@ public class TilePrefab : MonoBehaviour
 {
 
     [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private Color moveColor;
+    [SerializeField] private Color attackRangeColor;
+    [SerializeField] private Color attackTargetColor;
 
     public UnityEvent OnUnitStep;
     public UnityEvent OnUnitLand;
@@ -20,6 +23,9 @@ public class TilePrefab : MonoBehaviour
     public UnityEvent OnTileUnHovered;
     private Color startcolor;
     private TileSD refTileSD;
+
+
+
     public SpriteRenderer SpriteRenderer { get => spriteRenderer; }
 
 
@@ -80,22 +86,33 @@ public class TilePrefab : MonoBehaviour
         SpriteRenderer.color = start;
     }
 
-    public void SetMoveOverlay()
+    public void SetMoveMode()
     {
-        SpriteRenderer.color = Color.black;
+        SpriteRenderer.color = moveColor;
     }
-    public void SetAttackOverlay()
+    public void SetAttackMode()
     {
-        SpriteRenderer.color = Color.cyan;
+        AttackColor();
+        OnTileHovered.AddListener(TargetOverlay);
+        OnTileUnHovered.AddListener(AttackColor);
+    }
+
+    private void AttackColor()
+    {
+        SpriteRenderer.color = attackRangeColor;
     }
 
     public void TargetOverlay()
     {
-        SpriteRenderer.color = Color.magenta;
+        Debug.Log("Hovered");
+        SpriteRenderer.color = attackTargetColor;
     }
 
+   
     public void ResetOverlay()
     {
         SpriteRenderer.color = startcolor;
+        OnTileHovered.RemoveListener(TargetOverlay);
+        OnTileUnHovered.RemoveListener(AttackColor);
     }
 }

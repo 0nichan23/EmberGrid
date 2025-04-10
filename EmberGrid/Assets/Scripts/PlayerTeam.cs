@@ -3,9 +3,9 @@ using UnityEngine;
 [System.Serializable]
 public class PlayerTeam
 {
-    [SerializeField] private Unit[] units;
+    [SerializeField] private Hero[] units;
 
-    public Unit[] Units { get => units; }
+    public Hero[] Units { get => units; }
 
     public void Setup()
     {
