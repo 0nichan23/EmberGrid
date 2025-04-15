@@ -14,15 +14,16 @@ public class GridBuilder : MonoBehaviour
     [SerializeField] private Unit tempStartUnit;
 
     private Pathfinder pathfinder;
-
+    private Targeter targeter;
 
 
     private Dictionary<Vector2Int, TileSD> tileDictionary = new Dictionary<Vector2Int, TileSD>();
     private Dictionary<Vector2Int, TileSD> walkableDictionary = new Dictionary<Vector2Int, TileSD>();
 
     public Dictionary<Vector2Int, TileSD> TileDictionary { get => tileDictionary; }
-    public Dictionary<Vector2Int, TileSD> WalkableDictionary { get => walkableDictionary;}
+    public Dictionary<Vector2Int, TileSD> WalkableDictionary { get => walkableDictionary; }
     public Pathfinder Pathfinder { get => pathfinder; }
+    public Targeter Targeter { get => targeter; }
 
     private void Start()
     {
@@ -30,6 +31,7 @@ public class GridBuilder : MonoBehaviour
         GenerateGrid();
         PlaceTempUnit();
         pathfinder = new Pathfinder();
+        targeter = new Targeter();
     }
     void GenerateGrid()
     {
@@ -57,7 +59,7 @@ public class GridBuilder : MonoBehaviour
     }
 
 
-    public TileSD GetTileFromPosition(Vector2Int pos, Dictionary<Vector2Int, TileSD> map = null)
+    public TileSD GetTileFromPosition(Vector2Int pos, Dictionary<Vector2Int, TileSD> map)
     {
         if (map.ContainsKey(pos))
         {
@@ -87,7 +89,6 @@ public class GridBuilder : MonoBehaviour
     //attack the tile directly for targeted attacks 
     public void HitTiles(Unit user, UnitAction action, TileSD sourceTile)
     {
-        Vector2Int userTilePos = user.Movement.CurrentTile.Pos;
 
         foreach (var target in action.Targets)
         {
@@ -97,6 +98,29 @@ public class GridBuilder : MonoBehaviour
                 currentTile.HitTile(user, action);
             }
         }
+    }
+
+
+    public void HitTiles(Unit user, UnitAction action, TileSD[] hitbox)
+    {
+        foreach(var target in hitbox)
+        {
+            target.HitTile(user, action);
+        }
+    }
+
+    public TileSD[] GetHitbox(Unit user, UnitAction action, TileSD sourceTile)
+    {
+        List<TileSD> hitbox = new List<TileSD>();
+        foreach (var target in action.Targets)
+        {
+            TileSD currentTile = GetTileFromPosition(sourceTile.Pos + target, tileDictionary);
+            if (!ReferenceEquals(currentTile, null))
+            {
+                hitbox.Add(currentTile);
+            }
+        }
+        return hitbox.ToArray();
     }
 
     public TileSD[] GetTilesInReach(TileSD source, int range)
@@ -162,21 +186,21 @@ public class GridBuilder : MonoBehaviour
     }
 
 
-   /* [ContextMenu("Test path")]
-    public void TestPath()
-    {
-       List<TileSD> foundPath =  pathfinder.FindPathToDest(tempStartUnit.Movement.CurrentTile, GetTileFromPosition(new Vector2Int(0, 0), tileDictionary), walkableDictionary);
+    /* [ContextMenu("Test path")]
+     public void TestPath()
+     {
+        List<TileSD> foundPath =  pathfinder.FindPathToDest(tempStartUnit.Movement.CurrentTile, GetTileFromPosition(new Vector2Int(0, 0), tileDictionary), walkableDictionary);
 
-        if (ReferenceEquals(foundPath, null))
-        {
-            Debug.Log("Path unreachable");
-            return;
-        }
-        foreach (TileSD tile in foundPath)
-        {
-            tile.MoveOverlay();
-        }
-    }*/
+         if (ReferenceEquals(foundPath, null))
+         {
+             Debug.Log("Path unreachable");
+             return;
+         }
+         foreach (TileSD tile in foundPath)
+         {
+             tile.MoveOverlay();
+         }
+     }*/
 }
 
 [System.Serializable]
@@ -235,6 +259,16 @@ public class TileSD : IHeapItem<TileSD>
     public void AttackOverlay()
     {
         refTile.SetAttackMode();
+    }
+
+    public void TargetOverlay(Unit user, UnitAction action)
+    {
+        if (!ReferenceEquals(subscribedUnit, null))
+        {
+            subscribedUnit.Damageable.GetHitDisplay(action, user);
+        }
+
+        RefTile.TargetOverlay();
     }
 
     public void ResetOverlay()

@@ -8,6 +8,7 @@ public class ActionBar : MonoBehaviour
 {
     [SerializeField] private Button attackButton; //open up attack selection
     [SerializeField] private Button waitButton; //execute wait action
+    [SerializeField] private Button moveButton; //execute wait action
 
     private void Start()
     {
@@ -35,6 +36,7 @@ public class ActionBar : MonoBehaviour
             //attack button setup
             attackButton.onClick.AddListener(given.TestAttack);
             waitButton.onClick.AddListener(given.ActionHandler.TakeWaitAction);
+            moveButton.onClick.AddListener(given.Movement.SetMovementMode);
         }
     }
 

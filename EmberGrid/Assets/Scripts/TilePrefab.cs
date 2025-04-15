@@ -1,6 +1,4 @@
 using System.Collections;
-using System.Runtime.CompilerServices;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -13,21 +11,29 @@ public class TilePrefab : MonoBehaviour
 
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Color moveColor;
+    [SerializeField] private Color moveSelectedColor;
     [SerializeField] private Color attackRangeColor;
     [SerializeField] private Color attackTargetColor;
 
     public UnityEvent OnUnitStep;
     public UnityEvent OnUnitLand;
-    public UnityEvent<TileSD> OnTileClicked;
+
+    public UnityEvent OnTileClicked;
+    public UnityEvent<TileSD> OnTileClickedRef;
+
     public UnityEvent OnTileHovered;
+    public UnityEvent<TileSD> OnTileHoveredRef;
+
     public UnityEvent OnTileUnHovered;
+    public UnityEvent<TileSD> OnTileUnHoveredRef;
+
     private Color startcolor;
     private TileSD refTileSD;
 
 
 
     public SpriteRenderer SpriteRenderer { get => spriteRenderer; }
-
+    public TileSD RefTileSD { get => refTileSD; }
 
     public void CacheSD(TileSD givenSD)
     {
@@ -42,7 +48,8 @@ public class TilePrefab : MonoBehaviour
     private void OnMouseDown()
     {
         spriteRenderer.color = new Color(startcolor.r, startcolor.g, startcolor.b, 0.33f);
-        OnTileClicked?.Invoke(refTileSD);
+        OnTileClickedRef?.Invoke(refTileSD);
+        OnTileClicked?.Invoke();
     }
 
     private void OnMouseUp()
@@ -54,12 +61,14 @@ public class TilePrefab : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        OnTileHovered?.Invoke();   
+        OnTileHovered?.Invoke();
+        OnTileHoveredRef?.Invoke(RefTileSD);
     }
 
     private void OnMouseExit()
     {
         OnTileUnHovered?.Invoke();
+        OnTileUnHoveredRef?.Invoke(RefTileSD);
     }
 
     public void RedBlink()
@@ -78,7 +87,7 @@ public class TilePrefab : MonoBehaviour
         while (counter < 1)
         {
             counter += Time.deltaTime;
-            
+
             float t = Mathf.PingPong(counter, 1f);
             SpriteRenderer.color = Color.Lerp(start, end, t);
             yield return null;
@@ -88,13 +97,15 @@ public class TilePrefab : MonoBehaviour
 
     public void SetMoveMode()
     {
-        SpriteRenderer.color = moveColor;
+        MoveColor();
+        OnTileHovered.AddListener(MovementOverlay);
+        OnTileUnHovered.AddListener(MoveColor);
     }
     public void SetAttackMode()
     {
         AttackColor();
-        OnTileHovered.AddListener(TargetOverlay);
-        OnTileUnHovered.AddListener(AttackColor);
+      /*  OnTileHovered.AddListener(TargetOverlay);
+        OnTileUnHovered.AddListener(AttackColor);*/
     }
 
     private void AttackColor()
@@ -102,17 +113,27 @@ public class TilePrefab : MonoBehaviour
         SpriteRenderer.color = attackRangeColor;
     }
 
+    private void MoveColor()
+    {
+        SpriteRenderer.color = moveColor;
+    }
+
     public void TargetOverlay()
     {
-        Debug.Log("Hovered");
         SpriteRenderer.color = attackTargetColor;
     }
 
-   
+    public void MovementOverlay()
+    {
+        SpriteRenderer.color = moveSelectedColor;
+    }
+
     public void ResetOverlay()
     {
         SpriteRenderer.color = startcolor;
-        OnTileHovered.RemoveListener(TargetOverlay);
-        OnTileUnHovered.RemoveListener(AttackColor);
+/*        OnTileHovered.RemoveListener(TargetOverlay);
+        OnTileUnHovered.RemoveListener(AttackColor);*/
+        OnTileHovered.RemoveListener(MovementOverlay);
+        OnTileUnHovered.RemoveListener(MoveColor);
     }
 }

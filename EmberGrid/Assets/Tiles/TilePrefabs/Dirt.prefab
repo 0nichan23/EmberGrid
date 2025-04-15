@@ -146,6 +146,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 1401914386688673124}
   moveColor: {r: 0.15726236, g: 0.20267205, b: 0.5849056, a: 0.8666667}
+  moveSelectedColor: {r: 0.33205768, g: 0.38066617, b: 0.7735849, a: 0.65882355}
   attackRangeColor: {r: 1, g: 0, b: 0, a: 0.78039217}
   attackTargetColor: {r: 0.41509432, g: 0.10377358, b: 0.3456631, a: 0.84313726}
   OnUnitStep:

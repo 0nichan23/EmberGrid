@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Targeter
 {
-    public List<TileSD> TargetTilesRelativeToSource(UnitAction action, Direction direction, Vector2Int originPos)
+    public TileSD[] GetHitbox(UnitAction action, Direction direction, Vector2Int originPos)
     {
         List<TileSD> foundTiles = new List<TileSD>();   
 
@@ -28,13 +28,13 @@ public class Targeter
                     newPos = originPos + item;
                     break;
             }
-            TileSD tile = GameManager.Instance.GridBuilder.GetTileFromPosition(newPos);
+            TileSD tile = GameManager.Instance.GridBuilder.GetTileFromPosition(newPos, GameManager.Instance.GridBuilder.TileDictionary);
             if (!ReferenceEquals(tile,null))
             {
                 foundTiles.Add(tile);
             }
         }
-        return foundTiles;
+        return foundTiles.ToArray();
     }
 
     public Direction GetCursorDirection(Unit unit)

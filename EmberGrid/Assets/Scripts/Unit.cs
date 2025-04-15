@@ -39,13 +39,14 @@ public class Unit : MonoBehaviour
     protected virtual void Events()
     {
         OnTurnEnded.AddListener(() => GameManager.Instance.SelectionManager.SelectUnit(null));
-        OnSelected.AddListener(movement.SetReachableTiles);
+        OnSelected.AddListener(() => GameManager.Instance.UIManager.UnitPanel.Setup(this));
+        OnSelected.AddListener(movement.SetMovementMode);
     }
 
     [ContextMenu("TestAttack")]
     public void TestAttack()
     {
-        WeaponHandler.Attack(weaponHandler.Weapon.BasicAttack);
+        WeaponHandler.SetAttackMode(weaponHandler.Weapon.BasicAttack);
     }
 
 

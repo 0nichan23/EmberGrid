@@ -13,11 +13,26 @@ public class DamageAE : ActionEffect
         {
             dmg.AddModFlat(User.Stats.GetStatFlatMod(stat));
         }
-        dmg.AddModFlat(User.Stats.GetDamageSpecificResistance(type) * -1);
-        dmg.AddModFlat(User.Stats.GetDamageReductionStat(type) * -1);
+        dmg.AddModFlat(target.Stats.GetDamageSpecificResistance(type) * -1);
+        dmg.AddModFlat(target.Stats.GetDamageReductionStat(type) * -1);
 
         target.Damageable.TakeDamage(dmg, User);
     }
+
+    public override void InvokeDisplayEffect(Unit target, Unit User)
+    {
+        DamageHandler dmg = new DamageHandler(type, baseDamage);
+        foreach (BaseStat stat in scaleStats)
+        {
+            dmg.AddModFlat(User.Stats.GetStatFlatMod(stat));
+        }
+        dmg.AddModFlat(target.Stats.GetDamageSpecificResistance(type) * -1);
+        dmg.AddModFlat(target.Stats.GetDamageReductionStat(type) * -1);
+
+        target.Damageable.TakeDamageDisplay(dmg, User);
+    }
+
+
     public int GetDamageFromUnit(Unit User)
     {
         int total = baseDamage;

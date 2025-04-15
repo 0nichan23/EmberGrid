@@ -10,15 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 44a44c5b7f6b6704d901c39fc3895cbd, type: 3}
-  m_Name: UnitAction
+  m_Name: Test
   m_EditorClassIdentifier: 
-  cost: 10
+  cost: 0
   actionType: 0
   effects:
   - {fileID: 11400000, guid: 4b97fef097d638748898666dfa1aac3c, type: 2}
   targets:
+  - {x: 0, y: 0}
   - {x: 1, y: 0}
-  - {x: 0, y: 1}
-  - {x: 2, y: 0}
-  - {x: 3, y: 0}
-  - {x: 0, y: 2}
+  range: 1

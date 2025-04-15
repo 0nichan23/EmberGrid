@@ -48,6 +48,22 @@ public class Damageable
         }
     }
 
+    public void GetHitDisplay(UnitAction action, Unit dealer)
+    {
+        //does not trigger events 
+        //invokes a display effect only  
+        foreach (var item in action.Effects)
+        {
+            item.InvokeDisplayEffect(owner, dealer);
+        }
+    }
+
+    public void TakeDamageDisplay(DamageHandler handler, Unit dealer)
+    {
+        int finalDamge = handler.GetFinalDamage();
+        Debug.Log($"{owner.name} will be hit for {finalDamge} by {dealer.name}");
+    }
+
     private void ClampHp()
     {
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);

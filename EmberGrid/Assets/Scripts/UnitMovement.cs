@@ -19,7 +19,7 @@ public class UnitMovement
         owner = givenOwner;
         this.speed = speed;
         speedLeft = speed;
-        givenOwner.OnDeselected.AddListener(CancelSelection);
+        givenOwner.OnDeselected.AddListener(CancelMovementMode);
     }
 
     public void ResetSpeed()
@@ -28,21 +28,22 @@ public class UnitMovement
     }
 
 
-    public void CancelSelection()
+    public void CancelMovementMode()
     {
         if (!ReferenceEquals(currentReach, null) && currentReach.Length > 0)
         {
             foreach (var kvp in currentReach)
             {
                 kvp.ResetOverlay();
-                kvp.RefTile.OnTileClicked.RemoveListener(MoveUnitToTile);
+                kvp.RefTile.OnTileClickedRef.RemoveListener(MoveUnitToTile);
             }
             currentReach = null;
         }
     }
 
-    public void SetReachableTiles()
+    public void SetMovementMode()
     {
+        owner.WeaponHandler.CancelAttackMode();
         List<TileSD> reachables = new List<TileSD>();
 
         for (int x = -speedLeft; x <= speedLeft; x++)
@@ -77,7 +78,7 @@ public class UnitMovement
         foreach (var reachable in reachables)
         {
             reachable.MoveOverlay();
-            reachable.RefTile.OnTileClicked.AddListener(MoveUnitToTile);
+            reachable.RefTile.OnTileClickedRef.AddListener(MoveUnitToTile);
         }
 
         currentReach = reachables.ToArray();
@@ -98,7 +99,7 @@ public class UnitMovement
         tile.SubUnit(owner);
         foreach (var item in currentReach)
         {
-            item.RefTile.OnTileClicked.RemoveListener(MoveUnitToTile);
+            item.RefTile.OnTileClickedRef.RemoveListener(MoveUnitToTile);
             item.ResetOverlay();
         }
     }

@@ -8,4 +8,9 @@ public class ActionEffect : ScriptableObject
     {
 
     }
+
+    public virtual void InvokeDisplayEffect(Unit target, Unit User)
+    {
+
+    }
 }

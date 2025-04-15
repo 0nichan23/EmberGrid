@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10bd480f3aeccd84b878a36cbf7e1846, type: 3}
   m_Name: Weapon
   m_EditorClassIdentifier: 
-  type: 0
-  basicAttack: {fileID: 11400000, guid: 0d11cacf0eebbe247b0304aa6b0eb06a, type: 2}
+  basicAttack: {fileID: 11400000, guid: 8654da9082153f24c9f1447b77099eea, type: 2}
+  encounters: {fileID: 0}
+  ultimate: {fileID: 0}

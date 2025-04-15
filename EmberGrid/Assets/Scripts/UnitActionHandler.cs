@@ -32,6 +32,8 @@ public class UnitActionHandler
     {
         if (CanTakeAction)
         {
+            owner.Movement.CancelMovementMode();
+            owner.WeaponHandler.CancelAttackMode();
             ExpandAction();
             OnWaited?.Invoke(owner);
         }

@@ -26,5 +26,4 @@ MonoBehaviour:
   - {x: 0, y: -1}
   - {x: 0, y: 1}
   - {x: -1, y: 1}
-  targeted: 1
-  range: 5
+  range: 1

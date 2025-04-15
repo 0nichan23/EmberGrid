@@ -1,8 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Net;
-using Unity.VisualScripting;
-using UnityEditor.Build.Content;
 using UnityEngine;
 
 [System.Serializable]
@@ -10,6 +6,7 @@ public class WeaponHandler
 {
     [SerializeField] private Weapon weapon;
     private Unit owner;
+    private TargetedActionData currentTargetData;
     public Weapon Weapon { get => weapon; }
 
 
@@ -17,6 +14,7 @@ public class WeaponHandler
     {
         this.weapon = weapon;
         owner = givenUnit;
+        owner.OnDeselected.AddListener(CancelAttackMode);
     }
 
     public int GetBasicAttackDamage()
@@ -37,32 +35,33 @@ public class WeaponHandler
         return total;
     }
 
-    public void Attack(UnitAction action)
+    public void SetAttackMode(UnitAction action)
     {
         if (!owner.ActionHandler.CanTakeAction)
         {
             return;
         }
 
-        owner.Movement.CancelSelection();
+        owner.Movement.CancelMovementMode();
 
-        if (!action.Targeted)
-        {
-            GameManager.Instance.GridBuilder.HitTiles(owner, action);
-            //set cancel 
-        }
-        else
-        {
-            TileSD[] reach = GameManager.Instance.GridBuilder.GetTilesInReach(owner.Movement.CurrentTile, action.Range);
-            TargetedActionData targetData = new TargetedActionData(reach, action, owner);
-            //set cancel
-            //open some sort of selection panel.
-            //can attack any tile as long as its in range. 
-        }
+        TileSD[] reach = GameManager.Instance.GridBuilder.GetTilesInReach(owner.Movement.CurrentTile, action.Range);
+        currentTargetData = new TargetedActionData(reach, action, owner, Direction.Right);
 
-       // owner.ActionHandler.ExpandAction();
-       //expand action only after a tile/ direction is clicked.
-       //cancel movemnt when attack button is clicked.
+
+
+    }
+
+
+
+
+
+    public void CancelAttackMode()
+    {
+        if (!ReferenceEquals(currentTargetData, null))
+        {
+            currentTargetData.Cancel();
+            currentTargetData = null;
+        }
     }
 
 }
@@ -70,28 +69,105 @@ public class WeaponHandler
 public class TargetedActionData
 {
     private TileSD[] reach;
+    private TileSD[] hitbox;
+    private TileSD currentSource;
+    private Direction dir;
     private UnitAction refAction;
     private Unit owner;
 
-    public TargetedActionData(TileSD[] reach, UnitAction action, Unit owner)
+
+    public TargetedActionData(TileSD[] reach, UnitAction action, Unit owner, Direction dir)
     {
         this.reach = reach;
+
         this.refAction = action;
         this.owner = owner;
+        this.dir = dir;
+
+        GameManager.Instance.InputManager.RotLeft.AddListener(RotHitboxLeft);
+        GameManager.Instance.InputManager.RotRight.AddListener(RotHitboxRight);
+
         foreach (var item in reach)
         {
             item.AttackOverlay();
             item.RefTile.OnTileClicked.AddListener(AttackTargetedTile);
+            item.RefTile.OnTileHoveredRef.AddListener(SetCurrentSource);
+            item.RefTile.OnTileUnHoveredRef.AddListener(ReleaseSource);
+        }
+
+        this.dir = dir;
+    }
+
+    private void SetHitbox()
+    {
+        ResetHitboxHighlight();
+        if (!ReferenceEquals(currentSource, null))
+        {
+            hitbox = GameManager.Instance.GridBuilder.Targeter.GetHitbox(refAction, dir, currentSource.Pos);
+            foreach (var item in hitbox)
+            {
+                item.TargetOverlay(owner, refAction);
+            }
         }
     }
 
-    private void AttackTargetedTile(TileSD sd)
+    private void RotHitboxLeft()
     {
-        GameManager.Instance.GridBuilder.HitTiles(owner, refAction, sd);
+        dir = Utilities.GetRotLeftDir(dir);
+        SetHitbox();
+    }
+    private void RotHitboxRight()
+    {
+        dir = Utilities.GetRotRightDir(dir);
+        SetHitbox();
+    }
+
+    private void SetCurrentSource(TileSD source)
+    {
+        currentSource = source;
+        SetHitbox();
+    }
+
+    private void ReleaseSource(TileSD source)
+    {
+        ResetHitboxHighlight();
+        currentSource = null;
+    }
+
+    private void ResetHitboxHighlight()
+    {
+        List<TileSD> reachlist = new List<TileSD>(reach);
+        if (!ReferenceEquals(hitbox, null))
+        {
+            foreach (var item in hitbox)
+            {
+                item.ResetOverlay();
+                if (reachlist.Contains(item))
+                {
+                    item.AttackOverlay();
+                }
+            }
+        }
+    }
+
+    private void AttackTargetedTile()
+    {
+        GameManager.Instance.GridBuilder.HitTiles(owner, refAction, hitbox);
+        owner.ActionHandler.ExpandAction();
+        Cancel();
+    }
+
+    public void Cancel()
+    {
+        GameManager.Instance.InputManager.RotLeft.RemoveListener(RotHitboxLeft);
+        GameManager.Instance.InputManager.RotRight.RemoveListener(RotHitboxRight);
 
         foreach (var item in reach)
         {
             item.RefTile.OnTileClicked.RemoveListener(AttackTargetedTile);
+            item.RefTile.OnTileHoveredRef.RemoveListener(SetCurrentSource);
+            item.RefTile.OnTileUnHoveredRef.RemoveListener(ReleaseSource);
+
             item.ResetOverlay();
         }
     }
