@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -10,8 +11,6 @@ public class GridBuilder : MonoBehaviour
     [SerializeField] private int height;
 
     [SerializeField] private CustomTile[] tiles;
-
-    [SerializeField] private Unit tempStartUnit;
 
     private Pathfinder pathfinder;
     private Targeter targeter;
@@ -29,7 +28,6 @@ public class GridBuilder : MonoBehaviour
     {
         Application.targetFrameRate = 120;
         GenerateGrid();
-        PlaceTempUnit();
         pathfinder = new Pathfinder();
         targeter = new Targeter();
     }
@@ -100,6 +98,14 @@ public class GridBuilder : MonoBehaviour
         }
     }
 
+
+    public TileSD GetRandomTile()
+    {
+        int index = Random.Range(0, tileDictionary.Count);
+        Vector2Int randomKey = tileDictionary.Keys.ElementAt(index);
+
+        return tileDictionary[randomKey];
+    }
 
     public void HitTiles(Unit user, UnitAction action, TileSD[] hitbox)
     {
@@ -173,18 +179,6 @@ public class GridBuilder : MonoBehaviour
         }
         return neighbours;
     }
-
-    //TEMP
-    private void PlaceTempUnit()
-    {
-        TileSD tile = GetTileFromPosition(new Vector2Int(width / 2, height / 2), walkableDictionary);
-        if (tile != null)
-        {
-            tile.SubUnit(tempStartUnit);
-            tempStartUnit.transform.position = new Vector3Int(tile.Pos.x, tile.Pos.y, 0);
-        }
-    }
-
 
     /* [ContextMenu("Test path")]
      public void TestPath()

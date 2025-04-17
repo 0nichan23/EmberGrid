@@ -103,4 +103,10 @@ public class UnitMovement
             item.ResetOverlay();
         }
     }
+
+    public void SetStartPos(TileSD tile)
+    {
+        owner.transform.position = new Vector3Int(tile.Pos.x, tile.Pos.y, 0);
+        tile.SubUnit(owner);
+    }
 }

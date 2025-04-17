@@ -13,9 +13,18 @@ public class PlayerTeam
         {
             unit.OnTurnEnded.AddListener(CheckPhaseEnded);
         }
+        PositionUnits();
         UnLockUnits();
     }
 
+
+    private void PositionUnits()
+    {
+        foreach (var unit in units)
+        {
+            unit.Movement.SetStartPos(GameManager.Instance.GridBuilder.GetRandomTile());
+        }
+    }
 
     private void CheckPhaseEnded()
     {

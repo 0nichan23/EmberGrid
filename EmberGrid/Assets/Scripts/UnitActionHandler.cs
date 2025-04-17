@@ -48,6 +48,7 @@ public class UnitActionHandler
     public void BeginPhase()
     {
         actionPoints = 1;
+        TurnPlayed = false;
     }
 
 }
