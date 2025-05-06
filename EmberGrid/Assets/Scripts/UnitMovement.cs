@@ -1,6 +1,10 @@
+using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static UnityEditor.PlayerSettings;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 [System.Serializable]
 public class UnitMovement
@@ -89,13 +93,17 @@ public class UnitMovement
 
     private void MoveUnitToTile(TileSD tile)
     {
+        var path = GameManager.Instance.GridBuilder.Pathfinder.FindPathToDest(
+                currentTile, tile, GameManager.Instance.GridBuilder.WalkableDictionary);
+
         speedLeft -= Pathfinder.GetDistanceOfTiles(currentTile.Pos, tile.Pos);
 
         if (!ReferenceEquals(CurrentTile, null))
         {
             currentTile.UnSubUnit();
         }
-        owner.transform.position = new Vector3Int(tile.Pos.x, tile.Pos.y, 0);
+        //owner.transform.position = new Vector3Int(tile.Pos.x, tile.Pos.y, 0);
+        owner.StartCoroutine(WalkAlongPath(path));
         tile.SubUnit(owner);
         foreach (var item in currentReach)
         {
@@ -109,4 +117,24 @@ public class UnitMovement
         owner.transform.position = new Vector3Int(tile.Pos.x, tile.Pos.y, 0);
         tile.SubUnit(owner);
     }
+
+
+    private IEnumerator WalkAlongPath(List<TileSD> path)
+    {
+        foreach (var target in path)
+        {
+            yield return  owner.StartCoroutine(MoveToPosition(target.RefTile.transform.position));
+        }
+    }
+
+    private IEnumerator MoveToPosition(Vector3 pos)
+    {
+        while (Vector3.Distance(owner.transform.position, pos) > 0.05f)
+        {
+            owner.transform.position = Vector3.MoveTowards(owner.transform.position, pos, 2 * Time.deltaTime);
+            yield return null;
+        }
+        owner.transform.position = pos; // Snap to final position
+    }
+
 }
