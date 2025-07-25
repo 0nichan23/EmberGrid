@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
+[DefaultExecutionOrder(-1)]
 public class GridBuilder : MonoBehaviour
 {
     [SerializeField] private Tilemap tilemap;
@@ -142,7 +143,7 @@ public class GridBuilder : MonoBehaviour
                 if (Pathfinder.GetDistanceOfTiles(source.Pos, pos) > range)
                     continue;
 
-                TileSD reach = GameManager.Instance.GridBuilder.GetTileFromPosition(pos, tileDictionary);
+                TileSD reach = GetTileFromPosition(pos, tileDictionary);
                 if (reach != null)
                 {
                     inReach.Add(reach);

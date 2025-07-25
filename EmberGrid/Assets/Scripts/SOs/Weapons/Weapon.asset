@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Weapon
   m_EditorClassIdentifier: 
   basicAttack: {fileID: 11400000, guid: 8654da9082153f24c9f1447b77099eea, type: 2}
-  encounters: {fileID: 0}
+  encounters: []
   ultimate: {fileID: 0}

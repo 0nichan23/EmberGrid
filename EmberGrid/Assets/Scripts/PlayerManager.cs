@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
-    [SerializeField] private PlayerTeam team;
+    [SerializeField] private UnitTeam playerTeam;
 
-    public PlayerTeam Team { get => team; }
+    public UnitTeam Team { get => playerTeam; }
 
     private void Start()
     {
-        team.Setup();
-        GameManager.Instance.UIManager.HerosBar.CreateSlots(team.Units);
-        GameManager.Instance.TurnManager.OnPlayerPhase.AddListener(team.UnLockUnits);
-        GameManager.Instance.TurnManager.OnPlayerPhase.AddListener(team.PlayerPhaseReset);
-        GameManager.Instance.TurnManager.OnEnemyPhase.AddListener(team.LockUnits);
+        playerTeam.Setup();
+        GameManager.Instance.UIManager.HerosBar.CreateSlots(playerTeam.Units);
+        GameManager.Instance.TurnManager.OnPlayerPhase.AddListener(playerTeam.UnLockUnits);
+        GameManager.Instance.TurnManager.OnPlayerPhase.AddListener(playerTeam.PlayerPhaseReset);
+        GameManager.Instance.TurnManager.OnEnemyPhase.AddListener(playerTeam.LockUnits);
     }
 
 }

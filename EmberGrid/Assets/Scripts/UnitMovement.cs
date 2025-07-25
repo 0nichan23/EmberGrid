@@ -17,6 +17,7 @@ public class UnitMovement
     public TileSD CurrentTile { get => currentTile; set => currentTile = value; }
     public int Speed { get => speed; set => speed = value; }
     public Unit Owner { get => owner; }
+    public bool IsMoving { get; private set; }
 
     public UnitMovement(Unit givenOwner, int speed)
     {
@@ -135,6 +136,15 @@ public class UnitMovement
             yield return null;
         }
         owner.transform.position = pos; // Snap to final position
+    }
+
+    //for enemies. 
+    public IEnumerator MoveAlongPath(List<TileSD> path)
+    {
+        IsMoving = true;
+        foreach (var step in path)
+            yield return owner.StartCoroutine(WalkAlongPath(new List<TileSD> { step }));
+        IsMoving = false;
     }
 
 }

@@ -43,7 +43,7 @@ public class Unit : MonoBehaviour
     {
         OnTurnEnded.AddListener(() => GameManager.Instance.SelectionManager.SelectUnit(null));
         OnSelected.AddListener(() => GameManager.Instance.UIManager.UnitPanel.Setup(this));
-        OnSelected.AddListener(PositionCamOnUnit);
+       // OnSelected.AddListener(PositionCamOnUnit);
         OnSelected.AddListener(movement.SetMovementMode);
     }
 

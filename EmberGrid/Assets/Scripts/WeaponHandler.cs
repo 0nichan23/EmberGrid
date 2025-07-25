@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [System.Serializable]
@@ -16,6 +18,37 @@ public class WeaponHandler
         owner = givenUnit;
         owner.OnDeselected.AddListener(CancelAttackMode);
     }
+
+    public List<UnitAction> GetAvailableActions(int remainingAP)
+    {
+        var list = new List<UnitAction> { weapon.BasicAttack };
+        if (weapon.Encounters != null && weapon.Encounters.Length > 0)
+        {
+            list.AddRange(weapon.Encounters);
+        }
+
+        if (weapon.Daily != null)
+            list.Add(weapon.Daily);
+
+        // filter by AP cost
+        return list.Where(a => a.Cost <= remainingAP).ToList();
+    }
+
+    //for enemies.
+    public void ExecuteActionAt(UnitAction action, Direction dir, TileSD sourceTile)
+    {
+        // 1) Calculate hitbox tiles
+        var hitbox = GameManager.Instance.GridBuilder
+                         .Targeter
+                         .GetHitbox(action, dir, sourceTile.Pos);
+
+        // 2) Apply the action to each tile
+        GameManager.Instance.GridBuilder.HitTiles(owner, action, hitbox);
+
+        // 3) Consume the action point
+        owner.ActionHandler.ExpandAction();
+    }
+
 
     public int GetBasicAttackDamage()
     {

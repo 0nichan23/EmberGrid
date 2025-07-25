@@ -7,6 +7,7 @@ public class GameManager : MonoSingleton<GameManager>
     [SerializeField] private UIManager uiManager;
     [SerializeField] private GridBuilder gridBuilder;
     [SerializeField] private PlayerManager playerManager;
+    [SerializeField] private EnemiesManager enemiesManager;
     [SerializeField] private TurnManager turnManager;
     [SerializeField] private InputManager inputManager;
     private Utilities utils = new Utilities();
@@ -17,4 +18,5 @@ public class GameManager : MonoSingleton<GameManager>
     public PlayerManager PlayerManager { get => playerManager; }
     public TurnManager TurnManager { get => turnManager; }
     public InputManager InputManager { get => inputManager; }
+    public EnemiesManager EnemiesManager { get => enemiesManager; }
 }

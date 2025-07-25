@@ -14,6 +14,9 @@ public class Damageable
 
     private Unit owner;
 
+    public int MaxHealth { get => maxHealth; }
+    public int CurrentHealth { get => currentHealth; }
+
     public Damageable(Unit owner, int maxHealth)
     {
         this.owner = owner;
@@ -68,7 +71,7 @@ public class Damageable
     {
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
     }
-  
+
 
     public void RestoreDamage(int amount, Unit dealer)
     {
