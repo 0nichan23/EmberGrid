@@ -7,9 +7,9 @@ public class EnemyAI
 {
     private Unit unit;
     private GridBuilder gridBuilder => GameManager.Instance.GridBuilder;
-    private Targeter targeter => GameManager.Instance.GridBuilder.Targeter;
+    private Targeter targeter => gridBuilder.Targeter;
 
-    // Tune how much ranged enemies prefer maximum distance
+    // Weight for encouraging ranged units to stay at max distance
     private const float DISTANCE_WEIGHT = 1f;
 
     public EnemyAI(Unit givenOwner)
@@ -18,7 +18,7 @@ public class EnemyAI
     }
 
     /// <summary>
-    /// Drives one enemy’s turn: picks the best move+action, moves, then executes it.
+    /// Drives one enemy’s turn: picks the best stand+execute combo, moves, then attacks.
     /// </summary>
     public IEnumerator TakeTurn(Action onComplete)
     {
@@ -29,117 +29,133 @@ public class EnemyAI
         // 2) Gather all player units
         var heroes = GameManager.Instance.PlayerManager.Team.Units;
 
-        // 3) CACHE MOVEMENT FIRST
+        // 3) Cache movement stand positions
         var originTile = unit.Movement.CurrentTile;
         unit.Movement.SetMovementMode();
-        var reachable = unit.Movement.CurrentReach;
+        var standTiles = unit.Movement.CurrentReach.ToList();
+        standTiles.Add(originTile);
 
-        AIChoice best = new AIChoice { Score = float.MinValue };
+        AIChoice best = new AIChoice { Score = 0 };
 
-        foreach (var action in actions)//should really only be called once on 99% of enemies
+        // 4) Two-stage search: stand tile -> execute tile
+        foreach (var action in actions)
         {
-            // Determine max offset for this action’s pattern
-            int maxOffset = action.Targets
-                                  .Select(v => Math.Max(Math.Abs(v.x), Math.Abs(v.y)))
-                                  .DefaultIfEmpty(1)
-                                  .Max();
-
-            foreach (Direction dir in Enum.GetValues(typeof(Direction)))
+            foreach (var standTile in standTiles)//every tile the enemy can stand on
             {
-                foreach (var moveTile in reachable)
+                // Find all tiles from which the unit could execute this action
+                var execTiles = gridBuilder.GetTilesInReach(standTile, action.Range);
+
+                foreach (var execTile in execTiles)//every tile the enemy can attack from
                 {
-                    // Which tiles would this hit?
-                    var hitbox = targeter.GetHitbox(action, dir, moveTile.Pos);
-
-                    // Skip combos that would hit allied enemies
-                    if (hitbox.Any(t => t.SubscribedUnit != null && t.SubscribedUnit is Enemy))
-                        continue;
-
-                    float score = Score(action, hitbox, heroes, moveTile, maxOffset);
-
-                    if (score > best.Score)
+                    foreach (Direction dir in Enum.GetValues(typeof(Direction)))//every possible rotation the enemy can attack with 
                     {
-                        best.Action = action;
-                        best.Direction = dir;
-                        best.MoveTo = moveTile;
-                        best.Score = score;
+                        var hitbox = targeter.GetHitbox(action, dir, execTile.Pos);
+
+                        // Skip combos hitting any allied (enemy) unit, including itself
+                        if (hitbox.Any(t => ReferenceEquals(t, standTile) || (t.SubscribedUnit != null && t.SubscribedUnit is Enemy)))
+                        {
+                            continue;
+                        }
+
+                        float score = Score(action, hitbox, heroes, execTile, standTile,out bool hit);
+                        if (score > best.Score)
+                        {
+                            best.Action = action;
+                            best.Direction = dir;
+                            best.MoveTo = standTile;
+                            best.executeAt = execTile;
+                            best.Score = score;
+                            best.hit = hit;
+                        }
                     }
                 }
             }
         }
 
-        // 4) Execute best choice
+        // 5) Execute the best combo
         if (best.Action != null)
         {
-            // Pathfind
+            Debug.Log($"{best.MoveTo.Pos} standing tile, execute action @{best.executeAt.Pos}, facing {best.Direction} with a total score of {best.Score}");
+
+            // Pathfind and move to the chosen stand tile
             var path = gridBuilder.Pathfinder.FindPathToDest(
                 originTile,
                 best.MoveTo,
                 gridBuilder.WalkableDictionary);
 
-            // Move along path
             yield return unit.StartCoroutine(
                 unit.Movement.MoveAlongPath(path));
 
+            // Subscribe unit to the stand tile
             best.MoveTo.SubUnit(unit);
 
-            // Attack from chosen tile & direction
-            unit.WeaponHandler.ExecuteActionAt(
-                best.Action,
-                best.Direction,
-                best.MoveTo);
+            if (best.hit)
+            {
+                // Execute the action from the chosen execute tile and direction
+                unit.WeaponHandler.ExecuteActionAt(
+                    best.Action,
+                    best.Direction,
+                    best.executeAt);
+            }
+            else
+            {
+                unit.ActionHandler.TakeWaitAction();
+            }
+
 
             yield return new WaitForSeconds(0.2f);
         }
 
-        // 5) Done
+        // 6) Done
         onComplete?.Invoke();
     }
 
     /// <summary>
     /// Scores action effects plus a distance bonus for ranged attacks.
     /// </summary>
-    private float Score(
-        UnitAction action,
-        TileSD[] tiles,
-        Unit[] heroes,
-        TileSD moveTile,
-        int maxOffset)
+    private float Score(UnitAction action, TileSD[] hitbox, Unit[] heroes, TileSD execTile, TileSD standingTile, out bool hit)
     {
         float total = 0f;
-
-        // Base scoring: damage, heals, buffs
-        foreach (var tile in tiles)
+        hit = false;
+        // Base scoring: damage, heals, buffs (here, only damage)
+        foreach (var tile in hitbox)
         {
             var target = tile.SubscribedUnit;
             if (target == null) continue;
 
             foreach (var eff in action.Effects)
             {
-                switch (eff)
+                if (eff is DamageAE dmg && target is Hero)
                 {
-                    case DamageAE dmg:
-                        total += dmg.GetDamageFromUnit(unit);
-                        break;
-                        // add additional cases for healing or buffs as needed
+                    total += dmg.GetDamageFromUnit(unit);
+                    hit = true;
                 }
+
+                else if (eff is HealAE heal && target is Enemy enemy)
+                {
+                    total += heal.GetHealFromUnit(unit, enemy);
+                    hit = true;
+                }
+                // add cases for HealAE, BuffAE, etc.
             }
         }
 
-        // Add distance bonus for ranged if any real target hit
-        if (maxOffset > 1 && tiles.Any(t => t.SubscribedUnit != null))
+        float d = Pathfinder.GetDistanceOfTiles(standingTile.Pos, execTile.Pos);
+        float maxDist;
+
+        if (hit)
         {
-            float minDist = float.MaxValue;
-            foreach (var tile in tiles)
-            {
-                if (tile.SubscribedUnit == null) continue;
-                float d = Pathfinder.GetDistanceOfTiles(
-                    moveTile.Pos,
-                    tile.Pos);
-                minDist = Mathf.Min(minDist, d);
-            }
-            total += minDist * DISTANCE_WEIGHT;
+            maxDist = float.MinValue;
+            maxDist = Mathf.Max(maxDist, d);
         }
+        else
+        {
+            maxDist = float.MaxValue;
+            maxDist = Mathf.Min(maxDist, d);
+        }
+
+        total += maxDist * DISTANCE_WEIGHT;
+
 
         return total;
     }
@@ -151,5 +167,7 @@ public class EnemyAI
         public TileSD MoveTo;
         public TileSD executeAt;
         public float Score;
+        public bool hit;
     }
 }
+
