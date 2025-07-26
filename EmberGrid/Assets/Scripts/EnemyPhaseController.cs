@@ -24,23 +24,20 @@ public class EnemyPhaseController : MonoBehaviour
 
     private void NextEnemyTurn()
     {
+
         if (currentEnemy >= enemies.Length)
         {
-            // All enemies have moved → back to player phase
-            GameManager.Instance.TurnManager.SwitchPhase();
             return;
         }
 
         var enemy = enemies[currentEnemy];
         enemy.ActionHandler.BeginPhase();
+        currentEnemy++;
 
         // Kick off its AI coroutine
         StartCoroutine(
             enemy.EnemyAI.TakeTurn(() =>
             {
-                // After AI is done, explicitly end its turn
-                enemy.ActionHandler.TakeWaitAction();
-                currentEnemy++;
                 NextEnemyTurn();
             })
         );

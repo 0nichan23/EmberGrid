@@ -1,10 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static UnityEditor.PlayerSettings;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 
 [System.Serializable]
 public class UnitMovement
@@ -18,6 +14,7 @@ public class UnitMovement
     public int Speed { get => speed; set => speed = value; }
     public Unit Owner { get => owner; }
     public bool IsMoving { get; private set; }
+    public TileSD[] CurrentReach { get => currentReach; }
 
     public UnitMovement(Unit givenOwner, int speed)
     {
@@ -80,10 +77,13 @@ public class UnitMovement
             }
         }
 
-        foreach (var reachable in reachables)
+        if (owner is Hero)
         {
-            reachable.MoveOverlay();
-            reachable.RefTile.OnTileClickedRef.AddListener(MoveUnitToTile);
+            foreach (var reachable in reachables)
+            {
+                reachable.MoveOverlay();
+                reachable.RefTile.OnTileClickedRef.AddListener(MoveUnitToTile);
+            }
         }
 
         currentReach = reachables.ToArray();
@@ -124,7 +124,7 @@ public class UnitMovement
     {
         foreach (var target in path)
         {
-            yield return  owner.StartCoroutine(MoveToPosition(target.RefTile.transform.position));
+            yield return owner.StartCoroutine(MoveToPosition(target.RefTile.transform.position));
         }
     }
 
@@ -143,7 +143,9 @@ public class UnitMovement
     {
         IsMoving = true;
         foreach (var step in path)
+        {
             yield return owner.StartCoroutine(WalkAlongPath(new List<TileSD> { step }));
+        }
         IsMoving = false;
     }
 

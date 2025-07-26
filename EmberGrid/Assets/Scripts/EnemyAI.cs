@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -28,15 +27,16 @@ public class EnemyAI
         var actions = unit.WeaponHandler.GetAvailableActions(remainingAP);
 
         // 2) Gather all player units
-        var heroes = GameManager.Instance.PlayerManager.Team.Units.ToList();
+        var heroes = GameManager.Instance.PlayerManager.Team.Units;
 
-        // 3) Precompute reachable move tiles and evaluate
+        // 3) CACHE MOVEMENT FIRST
         var originTile = unit.Movement.CurrentTile;
-        var reachable = gridBuilder.GetTilesInReach(originTile, unit.Movement.Speed);
+        unit.Movement.SetMovementMode();
+        var reachable = unit.Movement.CurrentReach;
 
         AIChoice best = new AIChoice { Score = float.MinValue };
 
-        foreach (var action in actions)
+        foreach (var action in actions)//should really only be called once on 99% of enemies
         {
             // Determine max offset for this action’s pattern
             int maxOffset = action.Targets
@@ -81,6 +81,8 @@ public class EnemyAI
             yield return unit.StartCoroutine(
                 unit.Movement.MoveAlongPath(path));
 
+            best.MoveTo.SubUnit(unit);
+
             // Attack from chosen tile & direction
             unit.WeaponHandler.ExecuteActionAt(
                 best.Action,
@@ -100,7 +102,7 @@ public class EnemyAI
     private float Score(
         UnitAction action,
         TileSD[] tiles,
-        List<Unit> heroes,
+        Unit[] heroes,
         TileSD moveTile,
         int maxOffset)
     {
@@ -147,6 +149,7 @@ public class EnemyAI
         public UnitAction Action;
         public Direction Direction;
         public TileSD MoveTo;
+        public TileSD executeAt;
         public float Score;
     }
 }
