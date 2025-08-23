@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class EnemiesManager : MonoBehaviour
 {
-    [SerializeField] private UnitTeam EnemyTeam;
+    [SerializeField] private UnitTeam enemyTeam;
+    [SerializeField] private EnemyPhaseController phaseController;
 
-    public UnitTeam Team { get => EnemyTeam; }
+    public UnitTeam Team { get => enemyTeam; }
 
     private void Start()
     {
-        EnemyTeam.Setup();
+        enemyTeam.Setup();
     }
 
 }

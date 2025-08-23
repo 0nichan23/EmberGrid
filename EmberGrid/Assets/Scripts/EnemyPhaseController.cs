@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 public class EnemyPhaseController : MonoBehaviour
@@ -18,28 +19,29 @@ public class EnemyPhaseController : MonoBehaviour
 
     private void StartEnemyPhase()
     {
+        foreach (Enemy enemy in enemies)
+        {
+            enemy.ActionHandler.BeginPhase();
+        }
         currentEnemy = 0;
         NextEnemyTurn();
     }
 
     private void NextEnemyTurn()
     {
-
         if (currentEnemy >= enemies.Length)
         {
             return;
         }
+        StartCoroutine(StartEnemyTurn());
+    }
 
+    private IEnumerator StartEnemyTurn()
+    {
+        Debug.Log($"Enemy{currentEnemy} playing turn");
         var enemy = enemies[currentEnemy];
-        enemy.ActionHandler.BeginPhase();
         currentEnemy++;
+        yield return StartCoroutine(enemy.EnemyAI.TakeTurn(NextEnemyTurn));
 
-        // Kick off its AI coroutine
-        StartCoroutine(
-            enemy.EnemyAI.TakeTurn(() =>
-            {
-                NextEnemyTurn();
-            })
-        );
     }
 }

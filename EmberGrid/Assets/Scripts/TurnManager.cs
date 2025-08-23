@@ -33,7 +33,7 @@ public class TurnManager : MonoBehaviour
             phase = Phase.Player;
             OnPlayerPhase?.Invoke();
         }
-        Debug.Log(phase);
+        Debug.Log("switched into " + phase);
     }
 
 
