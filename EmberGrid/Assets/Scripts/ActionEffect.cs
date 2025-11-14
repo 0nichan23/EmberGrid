@@ -2,15 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ActionEffect : ScriptableObject
+public abstract class ActionEffect : ScriptableObject
 {
-    public virtual void InvokeEffect(Unit target, Unit User)
-    {
+    public abstract void InvokeEffect(Unit target, Unit User);
 
-    }
-
-    public virtual void InvokeDisplayEffect(Unit target, Unit User)
-    {
-
-    }
+    public abstract void InvokeDisplayEffect(Unit target, Unit User);
 }

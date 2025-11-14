@@ -18,4 +18,7 @@ public class HealAE : ActionEffect
        
     }
 
+    public override void InvokeDisplayEffect(Unit target, Unit User)
+    {
+    }
 }
