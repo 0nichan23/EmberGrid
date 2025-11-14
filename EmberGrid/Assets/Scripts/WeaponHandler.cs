@@ -37,15 +37,8 @@ public class WeaponHandler
     //for enemies.
     public void ExecuteActionAt(UnitAction action, Direction dir, TileSD sourceTile)
     {
-        // 1) Calculate hitbox tiles
-        var hitbox = GameManager.Instance.GridBuilder
-                         .Targeter
-                         .GetHitbox(action, dir, sourceTile.Pos);
-
-        // 2) Apply the action to each tile
+        var hitbox = GameManager.Instance.GridBuilder.Targeter.GetHitbox(action, dir, sourceTile.Pos);
         GameManager.Instance.GridBuilder.HitTiles(owner, action, hitbox);
-
-        // 3) Consume the action point
         owner.ActionHandler.ExpandAction();
     }
 
@@ -70,22 +63,17 @@ public class WeaponHandler
 
     public void SetAttackMode(UnitAction action)
     {
-        if (!owner.ActionHandler.CanTakeAction)
+        if (!owner.ActionHandler.CanTakeAction || owner.CurrentMode == ActiveMode.AttackMode)
         {
             return;
         }
 
+        owner.CurrentMode = ActiveMode.AttackMode;
         owner.Movement.CancelMovementMode();
 
         TileSD[] reach = GameManager.Instance.GridBuilder.GetTilesInReach(owner.Movement.CurrentTile, action.Range);
         currentTargetData = new TargetedActionData(reach, action, owner, Direction.Right);
-
-
-
     }
-
-
-
 
 
     public void CancelAttackMode()

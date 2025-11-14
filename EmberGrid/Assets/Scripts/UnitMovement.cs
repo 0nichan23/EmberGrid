@@ -45,6 +45,13 @@ public class UnitMovement
 
     public void SetMovementMode()
     {
+        if (owner.CurrentMode == ActiveMode.MovementMode)
+        {
+            //cant repeat mode subsciriptions twice
+            return;
+        }
+        owner.CurrentMode = ActiveMode.MovementMode;
+
         owner.WeaponHandler.CancelAttackMode();
         List<TileSD> reachables = new List<TileSD>();
 

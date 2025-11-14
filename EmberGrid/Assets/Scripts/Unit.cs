@@ -18,7 +18,7 @@ public class Unit : MonoBehaviour
     [SerializeField] private UnitActionHandler actionHandler;
     [SerializeField] private SpriteRenderer visual; //temp
     [SerializeField] private Weapon testWeapon;
-
+    [SerializeField] private ActiveMode currentMode;
     public DamageDealer Dealer { get => dealer; }
     public Damageable Damageable { get => damageable; }
     public UnitStats Stats { get => stats; }
@@ -28,6 +28,7 @@ public class Unit : MonoBehaviour
     public UnitSelector Selector { get => selector; }
     public UnitActionHandler ActionHandler { get => actionHandler; }
     public SpriteRenderer Visual { get => visual; }
+    public ActiveMode CurrentMode { get => currentMode; set => currentMode = value; }
 
     protected virtual void Start()
     {
@@ -42,7 +43,9 @@ public class Unit : MonoBehaviour
     protected virtual void Events()
     {
         OnTurnEnded.AddListener(() => GameManager.Instance.SelectionManager.SelectUnit(null));
+        OnTurnEnded.AddListener(() => currentMode = ActiveMode.Unselected);
         OnSelected.AddListener(() => GameManager.Instance.UIManager.UnitPanel.Setup(this));
+        OnDeselected.AddListener(() => currentMode = ActiveMode.Unselected);
        // OnSelected.AddListener(PositionCamOnUnit);
         OnSelected.AddListener(movement.SetMovementMode);
     }
@@ -65,5 +68,11 @@ public class Unit : MonoBehaviour
     {
         actionHandler.TakeWaitAction();
     }
+}
 
+public enum ActiveMode
+{
+    Unselected,
+    AttackMode,
+    MovementMode,
 }
