@@ -35,16 +35,8 @@ public class DamageHandler
         
         foreach (var mod in flatMods)
         {
-            if (mod > 0)
-            {
-                final += mod;
-            }
-            else
-            {
-                final -= (mod * -1);
-            }
-
-            final = Mathf.Clamp(final, 0, int.MaxValue);
+            final += mod;
+            final = Mathf.Clamp(final, 0, float.MaxValue);
         }
 
         if (final <= 0)
@@ -68,7 +60,7 @@ public class DamageHandler
                 final += baseAmount * (item - 1);
             }
         }
-        return Mathf.RoundToInt(Mathf.Clamp(final, 0, int.MaxValue));
+        return Mathf.RoundToInt(Mathf.Clamp(final, 0, float.MaxValue));
     }
 }
 public enum DamageType

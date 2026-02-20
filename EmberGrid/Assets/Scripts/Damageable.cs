@@ -22,13 +22,17 @@ public class Damageable
         this.owner = owner;
         this.maxHealth = maxHealth;
         currentHealth = this.maxHealth;
+        OnTakeDamage = new UnityEvent<DamageHandler, DamageDealer, Damageable>();
+        OnGetHit = new UnityEvent<UnitAction, DamageDealer, Damageable>();
+        OnHeal = new UnityEvent();
+        OnDeath = new UnityEvent();
     }
 
     public void GetHit(UnitAction action, Unit dealer)
     {
-        //accuracy calc? 
+        //accuracy calc?
         OnGetHit?.Invoke(action, dealer.Dealer, this);
-        dealer.Dealer.OnHit?.Invoke(action, dealer.Dealer, this);
+        dealer.Dealer?.OnHit?.Invoke(action, dealer.Dealer, this);
 
         foreach (var item in action.Effects)
         {
@@ -39,15 +43,16 @@ public class Damageable
     public void TakeDamage(DamageHandler handler, Unit dealer)
     {
         OnTakeDamage?.Invoke(handler, dealer.Dealer, this);
-        dealer.Dealer.OnDealDamage?.Invoke(handler, dealer.Dealer, this);
+        dealer.Dealer?.OnDealDamage?.Invoke(handler, dealer.Dealer, this);
 
         int finalDamge = handler.GetFinalDamage();
         currentHealth -= finalDamge;
+        ClampHp();
         Debug.Log($"{owner.name} was hit for {finalDamge} by {dealer.name}");
         if (currentHealth <= 0)
         {
             OnDeath?.Invoke();
-            dealer.Dealer.OnKill?.Invoke();
+            dealer.Dealer?.OnKill?.Invoke();
         }
     }
 
@@ -75,6 +80,8 @@ public class Damageable
 
     public void RestoreDamage(int amount, Unit dealer)
     {
+        currentHealth += amount;
+        ClampHp();
         OnHeal?.Invoke();
     }
 

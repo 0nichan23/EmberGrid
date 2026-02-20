@@ -1,28 +1,21 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using UnityEngine;
 
 public class Pathfinder
 {
-    private Heap<TileSD> openList;
-    private List<TileSD> closedList;
-
-
-    private List<TileSD> path = new List<TileSD>();
-
-    [ContextMenu("find path")]
-    public void AttempFindingPath()
-    {
-        //FindPathToDest(test.CurrentPos, GameManager.Instance.PlayerWrapper.PlayerMovement.CurrentTile);
-    }
-
     public List<TileSD> FindPathToDest(TileSD startingPoint, TileSD destenation, Dictionary<Vector2Int, TileSD> map)
     {
-        Stopwatch sw = new Stopwatch();
-        sw.Start();
-        openList = new Heap<TileSD>(map.Count);
-        closedList = new List<TileSD>();
+        // Reset stale pathfinding data from previous calls
+        foreach (var tile in map.Values)
+        {
+            tile.costToStart = 0;
+            tile.costToEnd = 0;
+            tile.PathParent = null;
+            tile.HeapIndex = 0;
+        }
+
+        var openList = new Heap<TileSD>(map.Count);
+        var closedList = new List<TileSD>();
         TileSD currentTile;
         openList.Add(startingPoint);
         int imr = 0;
@@ -38,8 +31,6 @@ public class Pathfinder
 
             if (ReferenceEquals(currentTile, destenation))
             {
-                //found path
-                sw.Stop();
                 return RetracePath(startingPoint, destenation);
             }
 
@@ -47,7 +38,6 @@ public class Pathfinder
             {
                 if (closedList.Contains(neighbour) || (neighbour.Occupied && !ReferenceEquals(neighbour, destenation)))
                 {
-                    //if the neighbour was already the current tile.
                     continue;
                 }
 
@@ -60,6 +50,10 @@ public class Pathfinder
                     if (!openList.Contains(neighbour))
                     {
                         openList.Add(neighbour);
+                    }
+                    else
+                    {
+                        openList.UpdateItem(neighbour);
                     }
                 }
             }

@@ -1,18 +1,15 @@
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class TurnManager : MonoBehaviour
 {
-    //keep track of phase 
-    //player phase -> when a unit is selected lock every other unit so that it is not clickable 
-    //once a unit has performed an action mark it as a expanded 
-    //once player pahse starts unlock all characters 
-
     public UnityEvent OnPlayerPhase;
     public UnityEvent OnEnemyPhase;
 
     private Phase phase;
+    private bool isSwitching;
+
+    public Phase CurrentPhase => phase;
 
     private void Start()
     {
@@ -23,10 +20,13 @@ public class TurnManager : MonoBehaviour
     [ContextMenu("Phase Switch")]
     public void SwitchPhase()
     {
+        if (isSwitching) return;
+        isSwitching = true;
+
         if (phase == Phase.Player)
         {
             phase = Phase.Enemy;
-            OnEnemyPhase?.Invoke(); 
+            OnEnemyPhase?.Invoke();
         }
         else
         {
@@ -34,10 +34,8 @@ public class TurnManager : MonoBehaviour
             OnPlayerPhase?.Invoke();
         }
         Debug.Log("switched into " + phase);
+        isSwitching = false;
     }
-
-
-
 }
 
 public enum Phase

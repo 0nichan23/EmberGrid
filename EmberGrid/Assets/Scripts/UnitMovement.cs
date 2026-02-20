@@ -104,7 +104,7 @@ public class UnitMovement
         var path = GameManager.Instance.GridBuilder.Pathfinder.FindPathToDest(
                 currentTile, tile, GameManager.Instance.GridBuilder.WalkableDictionary);
 
-        speedLeft -= Pathfinder.GetDistanceOfTiles(currentTile.Pos, tile.Pos);
+        speedLeft -= path.Count;
 
         if (!ReferenceEquals(CurrentTile, null))
         {

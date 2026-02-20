@@ -16,7 +16,8 @@ public class Enemy : Unit
 
     protected override void Events()
     {
-        //nothing for now
+        OnTurnEnded.AddListener(() => CurrentMode = ActiveMode.Unselected);
+        OnDeselected.AddListener(() => CurrentMode = ActiveMode.Unselected);
     }
 
 }

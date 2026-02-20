@@ -35,11 +35,21 @@ public class DamageAE : ActionEffect
 
     public int GetDamageFromUnit(Unit User)
     {
+        return GetDamageFromUnit(User, null);
+    }
+
+    public int GetDamageFromUnit(Unit User, Unit target)
+    {
         int total = baseDamage;
         foreach (BaseStat stat in scaleStats)
         {
             total += User.Stats.GetStatFlatMod(stat);
         }
-        return total;
+        if (target != null)
+        {
+            total -= target.Stats.GetDamageSpecificResistance(type);
+            total -= target.Stats.GetDamageReductionStat(type);
+        }
+        return Mathf.Max(total, 0);
     }
 }

@@ -34,8 +34,10 @@ public class Unit : MonoBehaviour
     {
         stats = new UnitStats(baseStats);
         damageable = new Damageable(this, baseStats.MaxHealth);
+        dealer = new DamageDealer(this);
         weaponHandler = new WeaponHandler(this, testWeapon);
-        movement = new UnitMovement(this, 4);
+        int moveSpeed = baseStats.MovementSpeed > 0 ? baseStats.MovementSpeed : 4;
+        movement = new UnitMovement(this, moveSpeed);
         actionHandler = new UnitActionHandler(this);
         Events();
     }

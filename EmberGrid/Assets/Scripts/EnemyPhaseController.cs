@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemyPhaseController : MonoBehaviour
 {
-    private Enemy[] enemies => GameManager.Instance.EnemiesManager.Team.Units.OfType<Enemy>().ToArray();
+    private Enemy[] cachedEnemies;
     private int currentEnemy = 0;
 
     private void Start()
@@ -19,7 +19,10 @@ public class EnemyPhaseController : MonoBehaviour
 
     private void StartEnemyPhase()
     {
-        foreach (Enemy enemy in enemies)
+        cachedEnemies = GameManager.Instance.EnemiesManager.Team.Units.OfType<Enemy>()
+            .Where(e => e.Damageable.CurrentHealth > 0)
+            .ToArray();
+        foreach (Enemy enemy in cachedEnemies)
         {
             enemy.ActionHandler.BeginPhase();
         }
@@ -29,7 +32,7 @@ public class EnemyPhaseController : MonoBehaviour
 
     private void NextEnemyTurn()
     {
-        if (currentEnemy >= enemies.Length)
+        if (cachedEnemies == null || currentEnemy >= cachedEnemies.Length)
         {
             return;
         }
@@ -39,9 +42,8 @@ public class EnemyPhaseController : MonoBehaviour
     private IEnumerator StartEnemyTurn()
     {
         Debug.Log($"Enemy{currentEnemy} playing turn");
-        var enemy = enemies[currentEnemy];
+        var enemy = cachedEnemies[currentEnemy];
         currentEnemy++;
         yield return StartCoroutine(enemy.EnemyAI.TakeTurn(NextEnemyTurn));
-
     }
 }

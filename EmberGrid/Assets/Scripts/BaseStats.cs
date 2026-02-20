@@ -12,6 +12,7 @@ public class BaseStats : ScriptableObject
     [Range(1, 20)][SerializeField] private int resilience;
     [Range(1, 20)][SerializeField] private int resistance;
     [Range(1, 20)][SerializeField] private int willpower;
+    [Range(1, 10)][SerializeField] private int movementSpeed = 4;
 
     public int Might { get => might;}
     public int Finesse { get => finesse;}
@@ -20,4 +21,5 @@ public class BaseStats : ScriptableObject
     public int Resistance { get => resistance;}
     public int Willpower { get => willpower;}
     public int MaxHealth { get => maxHealth;}
+    public int MovementSpeed { get => movementSpeed;}
 }

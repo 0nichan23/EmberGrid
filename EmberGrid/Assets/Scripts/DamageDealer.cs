@@ -11,6 +11,9 @@ public class DamageDealer
     public DamageDealer(Unit owner)
     {
         this.owner = owner;
+        OnDealDamage = new UnityEvent<DamageHandler, DamageDealer, Damageable>();
+        OnHit = new UnityEvent<UnitAction, DamageDealer, Damageable>();
+        OnKill = new UnityEvent();
     }
 
 }

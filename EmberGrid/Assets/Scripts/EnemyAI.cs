@@ -120,6 +120,9 @@ public class EnemyAI
         {
             Debug.Log($"{chosen.MoveTo.Pos} standing tile, execute action @{chosen.executeAt.Pos}, facing {chosen.Direction} | hit={chosen.hit} | score={chosen.Score}");
 
+            // Unsubscribe from origin tile before moving
+            originTile.UnSubUnit();
+
             // Pathfind and move to the chosen stand tile
             var path = gridBuilder.Pathfinder.FindPathToDest(
                 originTile,
@@ -145,6 +148,11 @@ public class EnemyAI
             }
 
             yield return new WaitForSeconds(0.2f);
+        }
+        else
+        {
+            // No valid action or move available - end turn
+            unit.ActionHandler.TakeWaitAction();
         }
 
         // 6) Done
@@ -181,7 +189,7 @@ public class EnemyAI
             {
                 if (eff is DamageAE dmg && target is Hero)
                 {
-                    damageScore += dmg.GetDamageFromUnit(unit);
+                    damageScore += dmg.GetDamageFromUnit(unit, target);
                     willHit = true;
                     if (!hitHeroes.Contains(target)) hitHeroes.Add(target);
                 }
