@@ -35,7 +35,15 @@ public class DamageHandler
         
         foreach (var mod in flatMods)
         {
-            final += mod;
+            if (mod > 0)
+            {
+                final += mod;
+            }
+            else
+            {
+                final -= (mod * -1);
+            }
+
             final = Mathf.Clamp(final, 0, int.MaxValue);
         }
 
@@ -47,7 +55,7 @@ public class DamageHandler
 
         foreach (var item in mods)
         {
-            if (item <= Mathf.Epsilon)
+            if (item == 0f)
             {
                 return 0;
             }

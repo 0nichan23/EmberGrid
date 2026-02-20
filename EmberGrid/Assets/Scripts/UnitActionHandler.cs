@@ -21,12 +21,10 @@ public class UnitActionHandler
         actionPoints = 1;
     }
 
-    public void ExpendAction()
+    public void ExpandAction()
     {
-        if (actionPoints <= 0) return;
-
         actionPoints -= 1;
-        if (actionPoints <= 0)
+        if (actionPoints == 0)
         {
             EndTurn();
         }
@@ -38,7 +36,7 @@ public class UnitActionHandler
         {
             owner.Movement.CancelMovementMode();
             owner.WeaponHandler.CancelAttackMode();
-            ExpendAction();
+            ExpandAction();
             OnWaited?.Invoke(owner);
         }
     }

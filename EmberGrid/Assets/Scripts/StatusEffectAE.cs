@@ -7,12 +7,12 @@ public class StatusEffectAE : ActionEffect
 {
     public override void InvokeDisplayEffect(Unit target, Unit User)
     {
-        Debug.LogWarning("StatusEffectAE not yet implemented");
+        throw new System.NotImplementedException();
     }
 
     public override void InvokeEffect(Unit target, Unit User)
     {
-        Debug.LogWarning("StatusEffectAE not yet implemented");
+        throw new System.NotImplementedException();
     }
 }
 

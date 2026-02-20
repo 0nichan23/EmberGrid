@@ -28,7 +28,7 @@ public class UnitStats
 
     private Dictionary<DamageType, int> specificResistances = new Dictionary<DamageType, int>();
 
-    public int PhysicalDefenceT => Resilience + physicalDefEx;
+    public int PhysicalDefenceT => Resilience + magicalDefEx;
     public int MagicDefenceT => Resistance + magicalDefEx;
     public float CritHit => Mathf.Clamp((((float)Finesse / 2) + criticalHitEx), 0, 100);
 

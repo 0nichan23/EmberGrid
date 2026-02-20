@@ -104,38 +104,20 @@ public class UnitMovement
         var path = GameManager.Instance.GridBuilder.Pathfinder.FindPathToDest(
                 currentTile, tile, GameManager.Instance.GridBuilder.WalkableDictionary);
 
-        if (path == null || path.Count == 0)
-            return;
+        speedLeft -= Pathfinder.GetDistanceOfTiles(currentTile.Pos, tile.Pos);
 
-        speedLeft -= path.Count;
-
-        // Clean up reach overlays and listeners before moving
-        if (!ReferenceEquals(currentReach, null))
+        if (!ReferenceEquals(CurrentTile, null))
         {
-            foreach (var item in currentReach)
-            {
-                item.RefTile.OnTileClickedRef.RemoveListener(MoveUnitToTile);
-                item.ResetOverlay();
-            }
+            currentTile.UnSubUnit();
         }
-
-        var originTile = currentTile;
-        owner.StartCoroutine(MoveAndUpdateTiles(originTile, tile, path));
-    }
-
-    private IEnumerator MoveAndUpdateTiles(TileSD origin, TileSD destination, List<TileSD> path)
-    {
-        IsMoving = true;
-
-        if (!ReferenceEquals(origin, null))
+        //owner.transform.position = new Vector3Int(tile.Pos.x, tile.Pos.y, 0);
+        owner.StartCoroutine(WalkAlongPath(path));
+        tile.SubUnit(owner);
+        foreach (var item in currentReach)
         {
-            origin.UnSubUnit();
+            item.RefTile.OnTileClickedRef.RemoveListener(MoveUnitToTile);
+            item.ResetOverlay();
         }
-
-        yield return WalkAlongPath(path);
-
-        destination.SubUnit(owner);
-        IsMoving = false;
     }
 
     public void SetStartPos(TileSD tile)

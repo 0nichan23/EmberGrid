@@ -84,7 +84,7 @@ public class TilePrefab : MonoBehaviour
     private IEnumerator BlinkColor(Color start, Color end)
     {
         float counter = 0;
-        while (counter < 2)
+        while (counter < 1)
         {
             counter += Time.deltaTime;
 

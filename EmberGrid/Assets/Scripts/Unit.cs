@@ -34,7 +34,6 @@ public class Unit : MonoBehaviour
     {
         stats = new UnitStats(baseStats);
         damageable = new Damageable(this, baseStats.MaxHealth);
-        dealer = new DamageDealer(this);
         weaponHandler = new WeaponHandler(this, testWeapon);
         movement = new UnitMovement(this, 4);
         actionHandler = new UnitActionHandler(this);

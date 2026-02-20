@@ -120,29 +120,16 @@ public class EnemyAI
         {
             Debug.Log($"{chosen.MoveTo.Pos} standing tile, execute action @{chosen.executeAt.Pos}, facing {chosen.Direction} | hit={chosen.hit} | score={chosen.Score}");
 
-            // Move to the chosen stand tile (if not already there)
-            if (!ReferenceEquals(chosen.MoveTo, originTile))
-            {
-                var path = gridBuilder.Pathfinder.FindPathToDest(
-                    originTile,
-                    chosen.MoveTo,
-                    gridBuilder.WalkableDictionary);
+            // Pathfind and move to the chosen stand tile
+            var path = gridBuilder.Pathfinder.FindPathToDest(
+                originTile,
+                chosen.MoveTo,
+                gridBuilder.WalkableDictionary);
 
-                if (path != null && path.Count > 0)
-                {
-                    originTile.UnSubUnit();
-                    yield return unit.StartCoroutine(unit.Movement.MoveAlongPath(path));
-                    chosen.MoveTo.SubUnit(unit);
-                }
-                else
-                {
-                    // Path failed unexpectedly, stay in place and wait
-                    unit.ActionHandler.TakeWaitAction();
-                    yield return new WaitForSeconds(0.2f);
-                    onComplete?.Invoke();
-                    yield break;
-                }
-            }
+            yield return unit.StartCoroutine(unit.Movement.MoveAlongPath(path));
+
+            // Subscribe unit to the stand tile
+            chosen.MoveTo.SubUnit(unit);
 
             if (bestAttack.hit) // only execute if we're actually attacking
             {
