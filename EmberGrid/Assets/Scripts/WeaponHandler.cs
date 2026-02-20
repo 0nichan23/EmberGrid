@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [System.Serializable]
@@ -39,7 +38,7 @@ public class WeaponHandler
     {
         var hitbox = GameManager.Instance.GridBuilder.Targeter.GetHitbox(action, dir, sourceTile.Pos);
         GameManager.Instance.GridBuilder.HitTiles(owner, action, hitbox);
-        owner.ActionHandler.ExpandAction();
+        owner.ActionHandler.ExpendAction();
     }
 
 
@@ -63,10 +62,10 @@ public class WeaponHandler
 
     public void SetAttackMode(UnitAction action)
     {
-        if (!owner.ActionHandler.CanTakeAction || owner.CurrentMode == ActiveMode.AttackMode)
-        {
-            return;
-        }
+        if (!owner.ActionHandler.CanTakeAction) return;
+
+        if (owner.CurrentMode == ActiveMode.AttackMode)
+            CancelAttackMode();
 
         owner.CurrentMode = ActiveMode.AttackMode;
         owner.Movement.CancelMovementMode();
@@ -83,6 +82,7 @@ public class WeaponHandler
             currentTargetData.Cancel();
             currentTargetData = null;
         }
+        owner.CurrentMode = ActiveMode.Unselected;
     }
 
 }
@@ -115,8 +115,6 @@ public class TargetedActionData
             item.RefTile.OnTileHoveredRef.AddListener(SetCurrentSource);
             item.RefTile.OnTileUnHoveredRef.AddListener(ReleaseSource);
         }
-
-        this.dir = dir;
     }
 
     private void SetHitbox()
@@ -173,9 +171,12 @@ public class TargetedActionData
 
     private void AttackTargetedTile()
     {
+        if (ReferenceEquals(hitbox, null) || hitbox.Length == 0)
+            return;
+
         GameManager.Instance.GridBuilder.HitTiles(owner, refAction, hitbox);
-        owner.ActionHandler.ExpandAction();
-        Cancel();
+        owner.ActionHandler.ExpendAction();
+        owner.WeaponHandler.CancelAttackMode();
     }
 
     public void Cancel()
@@ -194,4 +195,3 @@ public class TargetedActionData
     }
 
 }
-

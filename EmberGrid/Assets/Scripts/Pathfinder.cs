@@ -9,13 +9,6 @@ public class Pathfinder
     private List<TileSD> closedList;
 
 
-    private List<TileSD> path = new List<TileSD>();
-
-    [ContextMenu("find path")]
-    public void AttempFindingPath()
-    {
-        //FindPathToDest(test.CurrentPos, GameManager.Instance.PlayerWrapper.PlayerMovement.CurrentTile);
-    }
 
     public List<TileSD> FindPathToDest(TileSD startingPoint, TileSD destenation, Dictionary<Vector2Int, TileSD> map)
     {
@@ -60,6 +53,10 @@ public class Pathfinder
                     if (!openList.Contains(neighbour))
                     {
                         openList.Add(neighbour);
+                    }
+                    else
+                    {
+                        openList.UpdateItem(neighbour);
                     }
                 }
             }
