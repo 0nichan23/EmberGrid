@@ -47,9 +47,9 @@ public class UnitTeam
     {
         foreach (var unit in units)
         {
-            // Skip dead units
+            /*// Skip dead units
             if (unit.Damageable.CurrentHealth <= 0)
-                continue;
+                continue;*/
             if (!unit.ActionHandler.TurnPlayed)
             {
                 return;
