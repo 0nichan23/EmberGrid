@@ -38,6 +38,11 @@ public class UnitStats
     public int DamageBonusEx { get => damageBonusEx; set => damageBonusEx = value; }
     public Dictionary<DamageType, int> SpecificResistances { get => specificResistances; }
 
+    public void SetSpecificResistances(Dictionary<DamageType, int> resistances)
+    {
+        specificResistances = new Dictionary<DamageType, int>(resistances);
+    }
+
     public UnitStats(BaseStats givenBaseStats)
     {
         this.might.value = givenBaseStats.Might;

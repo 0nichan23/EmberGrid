@@ -10,6 +10,7 @@ public class GameManager : MonoSingleton<GameManager>
     [SerializeField] private EnemiesManager enemiesManager;
     [SerializeField] private TurnManager turnManager;
     [SerializeField] private InputManager inputManager;
+    [SerializeField] private RewindManager rewindManager;
     private Utilities utils = new Utilities();
 
     public SelectionManager SelectionManager { get => selectionManager; }
@@ -19,4 +20,5 @@ public class GameManager : MonoSingleton<GameManager>
     public TurnManager TurnManager { get => turnManager; }
     public InputManager InputManager { get => inputManager; }
     public EnemiesManager EnemiesManager { get => enemiesManager; }
+    public RewindManager RewindManager { get => rewindManager; }
 }

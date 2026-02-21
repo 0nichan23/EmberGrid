@@ -85,5 +85,10 @@ public class Damageable
         OnHeal?.Invoke();
     }
 
+    public void SetHealth(int health)
+    {
+        currentHealth = Mathf.Clamp(health, 0, maxHealth);
+    }
+
 
 }
