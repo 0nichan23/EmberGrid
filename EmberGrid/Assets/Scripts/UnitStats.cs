@@ -4,7 +4,7 @@ using UnityEngine;
 [System.Serializable]
 public class UnitStats
 {
-    [SerializeField] private StatData might; //damage with heavy melee weapons, 
+    [SerializeField] private StatData might; //damage with heavy melee weapons 
     [SerializeField] private StatData finesse; //damage with light melee weapons and ranged weapons, critical hit rate
     [SerializeField] private StatData magic;//damage with all magical attacks
     [SerializeField] private StatData resilience;//damage reduction against all physical attacks
@@ -87,32 +87,16 @@ public class UnitStats
         switch (type)
         {
             case DamageType.Piercing:
-                return PhysicalDefenceT;
-
             case DamageType.Slashing:
-                return PhysicalDefenceT;
-
             case DamageType.Bludgeoning:
                 return PhysicalDefenceT;
 
             case DamageType.Fire:
-                return MagicDefenceT;
-
             case DamageType.Cold:
-                return MagicDefenceT;
-
             case DamageType.Electric:
-                return MagicDefenceT;
-
             case DamageType.Acid:
-                return MagicDefenceT;
-
             case DamageType.Poison:
-                return MagicDefenceT;
-
             case DamageType.Necrotic:
-                return MagicDefenceT;
-
             case DamageType.Radiant:
                 return MagicDefenceT;
         }

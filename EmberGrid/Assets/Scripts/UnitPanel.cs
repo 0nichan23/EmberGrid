@@ -1,4 +1,5 @@
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -41,6 +42,9 @@ public class UnitPanel : MonoBehaviour
         critChance.text = givenUnit.Stats.CritHit.ToString("F1")+"%";
         physicalDefence.text = givenUnit.Stats.PhysicalDefenceT.ToString("F0");
         magicalDefence.text = givenUnit.Stats.MagicDefenceT.ToString("F0");
+
+        unitPortrait.sprite = givenUnit.Visual.sprite;
+        unitPortrait.color = givenUnit.Visual.color;
 
         gameObject.SetActive(true);
     }

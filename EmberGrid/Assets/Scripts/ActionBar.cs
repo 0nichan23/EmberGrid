@@ -22,6 +22,7 @@ public class ActionBar : MonoBehaviour
     {
         waitButton.onClick.RemoveAllListeners();
         attackButton.onClick.RemoveAllListeners();
+        moveButton.onClick.RemoveAllListeners();
 
         if (ReferenceEquals(given, null))
         {
