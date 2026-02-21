@@ -30,6 +30,13 @@ public class EnemyPhaseController : MonoBehaviour
         NextEnemyTurn();
     }
 
+    public void CancelPhase()
+    {
+        StopAllCoroutines();
+        cachedEnemies = null;
+        currentEnemy = 0;
+    }
+
     private void NextEnemyTurn()
     {
         if (cachedEnemies == null || currentEnemy >= cachedEnemies.Length)

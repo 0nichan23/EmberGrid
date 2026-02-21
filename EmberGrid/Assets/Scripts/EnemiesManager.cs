@@ -8,6 +8,7 @@ public class EnemiesManager : MonoBehaviour
     [SerializeField] private EnemyPhaseController phaseController;
 
     public UnitTeam Team { get => enemyTeam; }
+    public EnemyPhaseController PhaseController { get => phaseController; }
 
     private void Start()
     {
