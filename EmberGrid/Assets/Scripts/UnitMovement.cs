@@ -51,6 +51,7 @@ public class UnitMovement
             //cant repeat mode subsciriptions twice
             return;
         }
+        if (!owner.ActionHandler.CanTakeAction) return;
         owner.CurrentMode = ActiveMode.MovementMode;
 
         owner.WeaponHandler.CancelAttackMode();

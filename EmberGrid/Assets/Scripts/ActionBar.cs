@@ -24,7 +24,7 @@ public class ActionBar : MonoBehaviour
         attackButton.onClick.RemoveAllListeners();
         moveButton.onClick.RemoveAllListeners();
 
-        if (ReferenceEquals(given, null))
+        if (ReferenceEquals(given, null) || !given.ActionHandler.CanTakeAction)
         {
             gameObject.SetActive(false);
         }
