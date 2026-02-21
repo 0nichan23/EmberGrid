@@ -10,6 +10,7 @@ public class UnitMovement
     private TileSD[] currentReach;
     private Unit owner;
     private int speedLeft;
+    public int SpeedLeft { get => speedLeft; set => speedLeft = value; }
     public TileSD CurrentTile { get => currentTile; set => currentTile = value; }
     public int Speed { get => speed; set => speed = value; }
     public Unit Owner { get => owner; }
@@ -101,6 +102,7 @@ public class UnitMovement
 
     private void MoveUnitToTile(TileSD tile)
     {
+        GameManager.Instance.RewindManager.CaptureSnapshot();
         var path = GameManager.Instance.GridBuilder.Pathfinder.FindPathToDest(
                 currentTile, tile, GameManager.Instance.GridBuilder.WalkableDictionary);
 

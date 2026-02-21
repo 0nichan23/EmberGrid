@@ -11,6 +11,7 @@ public class UnitActionHandler
     private Unit owner;
     private bool turnPlayed;
     public bool CanTakeAction => actionPoints > 0;
+    public int ActionPoints { get => actionPoints; set => actionPoints = value; }
 
     public bool TurnPlayed { get => turnPlayed; set => turnPlayed = value; }
 
@@ -34,6 +35,7 @@ public class UnitActionHandler
     {
         if (CanTakeAction)
         {
+            GameManager.Instance.RewindManager.CaptureSnapshot();
             owner.Movement.CancelMovementMode();
             owner.WeaponHandler.CancelAttackMode();
             ExpandAction();
