@@ -12,6 +12,7 @@ public class RewindManager : MonoBehaviour
 
     private Stack<PhaseSnapshot> snapshotStack = new Stack<PhaseSnapshot>();
     private int rewindsUsedThisPhase;
+    private bool isRewinding;
 
     public int RewindsRemaining => maxRewindsPerPhase - rewindsUsedThisPhase;
     public bool CanRewind => snapshotStack.Count > 0 && rewindsUsedThisPhase < maxRewindsPerPhase;
@@ -19,7 +20,6 @@ public class RewindManager : MonoBehaviour
     private void Start()
     {
         GameManager.Instance.TurnManager.OnPlayerPhase.AddListener(OnPlayerPhaseStart);
-        GameManager.Instance.TurnManager.OnEnemyPhase.AddListener(OnEnemyPhaseStart);
 
         if (rewindButton != null)
         {
@@ -41,14 +41,11 @@ public class RewindManager : MonoBehaviour
 
     private void OnPlayerPhaseStart()
     {
-        snapshotStack.Clear();
-        rewindsUsedThisPhase = 0;
-        UpdateRewindUI();
-    }
-
-    private void OnEnemyPhaseStart()
-    {
-        snapshotStack.Clear();
+        if (!isRewinding)
+        {
+            snapshotStack.Clear();
+            rewindsUsedThisPhase = 0;
+        }
         UpdateRewindUI();
     }
 
@@ -87,6 +84,17 @@ public class RewindManager : MonoBehaviour
         rewindsUsedThisPhase++;
 
         GameManager.Instance.SelectionManager.SelectUnit(null);
+
+        bool wasEnemyPhase = GameManager.Instance.TurnManager.CurrentPhase == Phase.Enemy;
+
+        if (wasEnemyPhase)
+        {
+            GameManager.Instance.EnemiesManager.PhaseController.CancelPhase();
+
+            isRewinding = true;
+            GameManager.Instance.TurnManager.SwitchPhase();
+            isRewinding = false;
+        }
 
         foreach (var us in snapshot.HeroSnapshots)
         {
