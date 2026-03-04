@@ -9,28 +9,49 @@ public class WeaponHandler
     [SerializeField] private Weapon weapon;
     private Unit owner;
     private TargetedActionData currentTargetData;
+
+    private UnitAction basicAttack;
+    private UnitAction encounter;
+    private UnitAction ultimate;
+
     public Weapon Weapon { get => weapon; }
+    public UnitAction BasicAttack { get => basicAttack; }
+    public UnitAction Encounter { get => encounter; }
+    public UnitAction Ultimate { get => ultimate; }
 
-
+    // Legacy constructor for enemies (reads abilities directly from weapon)
     public WeaponHandler(Unit givenUnit, Weapon weapon)
     {
         this.weapon = weapon;
+        owner = givenUnit;
+        owner.OnDeselected.AddListener(CancelAttackMode);
+
+        basicAttack = weapon.BasicAttack;
+        encounter = (weapon.Encounters != null && weapon.Encounters.Length > 0)
+            ? weapon.Encounters[0] : null;
+        ultimate = weapon.Daily;
+    }
+
+    // New constructor for heroes (takes resolved abilities from skill tree)
+    public WeaponHandler(Unit givenUnit, Weapon weapon,
+        UnitAction basicAttack, UnitAction encounter, UnitAction ultimate)
+    {
+        this.weapon = weapon;
+        this.basicAttack = basicAttack;
+        this.encounter = encounter;
+        this.ultimate = ultimate;
         owner = givenUnit;
         owner.OnDeselected.AddListener(CancelAttackMode);
     }
 
     public List<UnitAction> GetAvailableActions(int remainingAP)
     {
-        var list = new List<UnitAction> { weapon.BasicAttack };
-        if (weapon.Encounters != null && weapon.Encounters.Length > 0)
-        {
-            list.AddRange(weapon.Encounters);
-        }
+        var list = new List<UnitAction>();
 
-        if (weapon.Daily != null)
-            list.Add(weapon.Daily);
+        if (basicAttack != null) list.Add(basicAttack);
+        if (encounter != null) list.Add(encounter);
+        if (ultimate != null) list.Add(ultimate);
 
-        // filter by AP cost
         return list.Where(a => a.Cost <= remainingAP).ToList();
     }
 
@@ -45,17 +66,14 @@ public class WeaponHandler
 
     public int GetBasicAttackDamage()
     {
-        int total = 0;
+        if (basicAttack == null) return 0;
 
-        foreach (var item in weapon.BasicAttack.Effects)
+        int total = 0;
+        foreach (var item in basicAttack.Effects)
         {
-            if (item is not DamageAE)
+            if (item is DamageAE damageAE)
             {
-                continue;
-            }
-            else
-            {
-                total += (item as DamageAE).GetDamageFromUnit(owner);
+                total += damageAE.GetDamageFromUnit(owner);
             }
         }
         return total;
@@ -195,4 +213,3 @@ public class TargetedActionData
     }
 
 }
-

@@ -90,5 +90,11 @@ public class Damageable
         currentHealth = Mathf.Clamp(health, 0, maxHealth);
     }
 
+    public void AddMaxHealth(int amount)
+    {
+        maxHealth += amount;
+        currentHealth += amount;
+        ClampHp();
+    }
 
 }

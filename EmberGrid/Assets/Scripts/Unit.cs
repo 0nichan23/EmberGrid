@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -19,11 +20,20 @@ public class Unit : MonoBehaviour
     [SerializeField] private SpriteRenderer visual; //temp
     [SerializeField] private Weapon testWeapon;
     [SerializeField] private ActiveMode currentMode;
+
+    private WeaponHandler primaryHandler;
+    private WeaponHandler secondaryHandler;
+    private List<UnitAction> utilityActions;
+    private List<PassiveEffect> activePassives;
+
     public DamageDealer Dealer { get => dealer; }
     public Damageable Damageable { get => damageable; }
     public UnitStats Stats { get => stats; }
     public BaseStats BaseStats { get => baseStats; }
     public WeaponHandler WeaponHandler { get => weaponHandler; }
+    public WeaponHandler PrimaryHandler { get => primaryHandler; }
+    public WeaponHandler SecondaryHandler { get => secondaryHandler; }
+    public List<UnitAction> UtilityActions { get => utilityActions; }
     public UnitMovement Movement { get => movement; }
     public UnitSelector Selector { get => selector; }
     public UnitActionHandler ActionHandler { get => actionHandler; }
@@ -35,11 +45,61 @@ public class Unit : MonoBehaviour
         stats = new UnitStats(baseStats);
         damageable = new Damageable(this, baseStats.MaxHealth);
         dealer = new DamageDealer(this);
-        weaponHandler = new WeaponHandler(this, testWeapon);
+
+        // Enemy/legacy path: use testWeapon directly
+        if (testWeapon != null)
+        {
+            weaponHandler = new WeaponHandler(this, testWeapon);
+            primaryHandler = weaponHandler;
+        }
+
         int moveSpeed = baseStats.MovementSpeed > 0 ? baseStats.MovementSpeed : 4;
         movement = new UnitMovement(this, moveSpeed);
         actionHandler = new UnitActionHandler(this);
         Events();
+    }
+
+    public void InitializeFromLoadout(ResolvedLoadout loadout)
+    {
+        primaryHandler = new WeaponHandler(this, loadout.PrimaryWeapon,
+            loadout.PrimaryAtWill, loadout.PrimaryEncounter, loadout.PrimaryUltimate);
+
+        secondaryHandler = new WeaponHandler(this, loadout.SecondaryWeapon,
+            loadout.SecondaryAtWill, loadout.SecondaryEncounter, loadout.SecondaryUltimate);
+
+        // Default weaponHandler to primary for backward compat
+        weaponHandler = primaryHandler;
+
+        utilityActions = new List<UnitAction>(loadout.UtilityActions);
+
+        activePassives = new List<PassiveEffect>(loadout.PassiveEffects);
+        foreach (var passive in activePassives)
+        {
+            passive.Apply(this);
+        }
+    }
+
+    /// <summary>
+    /// Returns all available actions across both weapons and utility, filtered by remaining AP.
+    /// </summary>
+    public List<UnitAction> GetAllAvailableActions(int remainingAP)
+    {
+        var actions = new List<UnitAction>();
+
+        if (primaryHandler != null)
+            actions.AddRange(primaryHandler.GetAvailableActions(remainingAP));
+        if (secondaryHandler != null)
+            actions.AddRange(secondaryHandler.GetAvailableActions(remainingAP));
+        if (utilityActions != null)
+        {
+            foreach (var action in utilityActions)
+            {
+                if (action != null && action.Cost <= remainingAP)
+                    actions.Add(action);
+            }
+        }
+
+        return actions;
     }
 
     protected virtual void Events()
@@ -61,7 +121,8 @@ public class Unit : MonoBehaviour
     [ContextMenu("TestAttack")]
     public void TestAttack()
     {
-        WeaponHandler.SetAttackMode(weaponHandler.Weapon.BasicAttack);
+        if (weaponHandler != null && weaponHandler.BasicAttack != null)
+            weaponHandler.SetAttackMode(weaponHandler.BasicAttack);
     }
 
 

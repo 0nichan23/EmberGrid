@@ -185,6 +185,19 @@ public class UnitStats
         return 1 - (value * (maximumBonus / 100 / 20));
     }
 
+    public void AddStatBonus(BaseStat stat, int amount)
+    {
+        switch (stat)
+        {
+            case BaseStat.Might:      Might += amount; break;
+            case BaseStat.Finesse:    Finesse += amount; break;
+            case BaseStat.Magic:      Magic += amount; break;
+            case BaseStat.Resilience: Resilience += amount; break;
+            case BaseStat.Resistance: Resistance += amount; break;
+            case BaseStat.Willpower:  Willpower += amount; break;
+        }
+    }
+
 }
 
 

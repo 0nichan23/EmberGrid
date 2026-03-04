@@ -1,9 +1,30 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Hero : Unit
 {
+    [SerializeField] private HeroDefinition heroDefinition;
+    private HeroProgression progression;
+    private ResolvedLoadout loadout;
+
+    public HeroDefinition HeroDefinition { get => heroDefinition; }
+    public HeroProgression Progression { get => progression; }
+
+    public void SetProgression(HeroProgression progression)
+    {
+        this.progression = progression;
+    }
+
+    protected override void Start()
+    {
+        base.Start();
+
+        if (progression != null)
+        {
+            loadout = ResolvedLoadout.Resolve(progression);
+            InitializeFromLoadout(loadout);
+        }
+    }
+
     protected override void Events()
     {
         base.Events();
