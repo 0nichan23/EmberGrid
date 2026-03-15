@@ -45,6 +45,15 @@ public class Damageable
         OnTakeDamage?.Invoke(handler, dealer.Dealer, this);
         dealer.Dealer?.OnDealDamage?.Invoke(handler, dealer.Dealer, this);
 
+        // Shock amplification: increases direct damage taken
+        int shockStacks = owner.GetStatusStacks(StatusEffects.Shock);
+        if (shockStacks > 0)
+        {
+            float shockPercent = GameManager.Instance.StatusEffectManager.Config.GetValue(StatusEffects.Shock);
+            float shockMod = 1f + (shockPercent / 100f * shockStacks);
+            handler.AddMod(shockMod);
+        }
+
         int finalDamge = handler.GetFinalDamage();
         currentHealth -= finalDamge;
         ClampHp();
@@ -77,6 +86,36 @@ public class Damageable
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
     }
 
+
+    /// <summary>
+    /// Damage from status effects (DOTs). No dealer unit involved.
+    /// Still respects resistances via DamageHandler.
+    /// </summary>
+    public void TakeStatusDamage(int baseDamage, DamageType type, Unit target)
+    {
+        DamageHandler handler = new DamageHandler(type, baseDamage);
+        handler.AddModFlat(target.Stats.GetDamageSpecificResistance(type) * -1);
+        handler.AddModFlat(target.Stats.GetDamageReductionStat(type) * -1);
+
+        int finalDamage = handler.GetFinalDamage();
+        currentHealth -= finalDamage;
+        ClampHp();
+        Debug.Log($"{owner.name} took {finalDamage} {type} status damage");
+        if (currentHealth <= 0)
+        {
+            OnDeath?.Invoke();
+        }
+    }
+
+    /// <summary>
+    /// Heal without needing a dealer unit. Used by Regen.
+    /// </summary>
+    public void RestoreHealth(int amount)
+    {
+        currentHealth += amount;
+        ClampHp();
+        OnHeal?.Invoke();
+    }
 
     public void RestoreDamage(int amount, Unit dealer)
     {

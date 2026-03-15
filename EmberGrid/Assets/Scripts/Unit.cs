@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -19,6 +20,9 @@ public class Unit : MonoBehaviour
     [SerializeField] private SpriteRenderer visual; //temp
     [SerializeField] private Weapon testWeapon;
     [SerializeField] private ActiveMode currentMode;
+
+    private List<ActiveStatusEffect> activeEffects = new List<ActiveStatusEffect>();
+
     public DamageDealer Dealer { get => dealer; }
     public Damageable Damageable { get => damageable; }
     public UnitStats Stats { get => stats; }
@@ -70,6 +74,71 @@ public class Unit : MonoBehaviour
     {
         actionHandler.TakeWaitAction();
     }
+
+    #region Status Effects
+
+    public void AddStatusEffect(StatusEffects type, int stacks)
+    {
+        var config = GameManager.Instance.StatusEffectManager.Config;
+        int maxStacks = config.GetMaxStacks(type);
+
+        var existing = activeEffects.Find(e => e.Type == type);
+        if (existing != null)
+        {
+            existing.Stacks = Mathf.Min(existing.Stacks + stacks, maxStacks);
+        }
+        else
+        {
+            activeEffects.Add(new ActiveStatusEffect(type, Mathf.Min(stacks, maxStacks)));
+        }
+    }
+
+    public void RemoveStatusEffect(StatusEffects type)
+    {
+        bool hadStun = type == StatusEffects.Stun && HasStatus(StatusEffects.Stun);
+        activeEffects.RemoveAll(e => e.Type == type);
+
+        // If stun was cleansed mid-phase, re-enable the unit
+        if (hadStun)
+        {
+            actionHandler.OnStunCleansed();
+        }
+    }
+
+    public void TickStatusEffect(StatusEffects type)
+    {
+        var existing = activeEffects.Find(e => e.Type == type);
+        if (existing == null) return;
+
+        existing.Stacks -= 1;
+        if (existing.Stacks <= 0)
+        {
+            activeEffects.Remove(existing);
+        }
+    }
+
+    public int GetStatusStacks(StatusEffects type)
+    {
+        var existing = activeEffects.Find(e => e.Type == type);
+        return existing != null ? existing.Stacks : 0;
+    }
+
+    public bool HasStatus(StatusEffects type)
+    {
+        return activeEffects.Exists(e => e.Type == type && e.Stacks > 0);
+    }
+
+    public List<ActiveStatusEffect> GetActiveEffects()
+    {
+        return activeEffects;
+    }
+
+    public void SetActiveEffects(List<ActiveStatusEffect> effects)
+    {
+        activeEffects = effects;
+    }
+
+    #endregion
 }
 
 public enum ActiveMode

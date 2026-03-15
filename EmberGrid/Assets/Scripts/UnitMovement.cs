@@ -25,9 +25,29 @@ public class UnitMovement
         givenOwner.OnDeselected.AddListener(CancelMovementMode);
     }
 
+    public int GetEffectiveSpeed()
+    {
+        int effective = speed;
+
+        // Stride doubles movement
+        if (owner.HasStatus(StatusEffects.Stride))
+        {
+            effective *= 2;
+        }
+
+        // Chill halves movement per stack (50% reduction per stack)
+        int chillStacks = owner.GetStatusStacks(StatusEffects.Chill);
+        for (int i = 0; i < chillStacks; i++)
+        {
+            effective = Mathf.CeilToInt(effective * 0.5f);
+        }
+
+        return Mathf.Max(effective, 0);
+    }
+
     public void ResetSpeed()
     {
-        speedLeft = speed;
+        speedLeft = GetEffectiveSpeed();
     }
 
 

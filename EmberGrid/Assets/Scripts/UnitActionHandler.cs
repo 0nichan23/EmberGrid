@@ -51,8 +51,28 @@ public class UnitActionHandler
 
     public void BeginPhase()
     {
+        // Stun: unit cannot act this phase
+        if (owner.HasStatus(StatusEffects.Stun))
+        {
+            actionPoints = 0;
+            TurnPlayed = true;
+            Debug.Log($"{owner.name} is stunned and cannot act");
+            return;
+        }
+
         actionPoints = 1;
         TurnPlayed = false;
+        // Haste AP bonus is applied by StatusEffectProcessor.ProcessPhaseStart
+    }
+
+    /// <summary>
+    /// Called when Stun is cleansed mid-phase, re-enabling the unit.
+    /// </summary>
+    public void OnStunCleansed()
+    {
+        actionPoints = 1;
+        TurnPlayed = false;
+        Debug.Log($"{owner.name} was cleansed of stun and can now act");
     }
 
 }

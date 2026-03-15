@@ -1,19 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "AE/Status", fileName = "StatusEffect")]
 public class StatusEffectAE : ActionEffect
 {
-    public override void InvokeDisplayEffect(Unit target, Unit User)
-    {
-        // TODO: implement status effect display
-    }
+    [SerializeField] private StatusEffects effectType;
+    [SerializeField] private int stacksToApply = 1;
 
     public override void InvokeEffect(Unit target, Unit User)
     {
-        // TODO: implement status effect application
-        Debug.LogWarning($"StatusEffectAE.InvokeEffect not yet implemented");
+        target.AddStatusEffect(effectType, stacksToApply);
+        Debug.Log($"{User.name} applied {stacksToApply} stack(s) of {effectType} to {target.name}");
+    }
+
+    public override void InvokeDisplayEffect(Unit target, Unit User)
+    {
+        Debug.Log($"{User.name} would apply {stacksToApply} stack(s) of {effectType} to {target.name}");
     }
 }
 
@@ -26,5 +27,6 @@ public enum StatusEffects
     Bleed,
     Stun,
     Regen,
-    Stride
+    Stride,
+    Haste
 }
