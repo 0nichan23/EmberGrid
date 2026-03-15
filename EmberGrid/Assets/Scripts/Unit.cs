@@ -21,19 +21,13 @@ public class Unit : MonoBehaviour
     [SerializeField] private Weapon testWeapon;
     [SerializeField] private ActiveMode currentMode;
 
-    private WeaponHandler primaryHandler;
-    private WeaponHandler secondaryHandler;
-    private List<UnitAction> utilityActions;
-    private List<PassiveEffect> activePassives;
+    private List<ActiveStatusEffect> activeEffects = new List<ActiveStatusEffect>();
 
     public DamageDealer Dealer { get => dealer; }
     public Damageable Damageable { get => damageable; }
     public UnitStats Stats { get => stats; }
     public BaseStats BaseStats { get => baseStats; }
     public WeaponHandler WeaponHandler { get => weaponHandler; }
-    public WeaponHandler PrimaryHandler { get => primaryHandler; }
-    public WeaponHandler SecondaryHandler { get => secondaryHandler; }
-    public List<UnitAction> UtilityActions { get => utilityActions; }
     public UnitMovement Movement { get => movement; }
     public UnitSelector Selector { get => selector; }
     public UnitActionHandler ActionHandler { get => actionHandler; }
@@ -45,61 +39,11 @@ public class Unit : MonoBehaviour
         stats = new UnitStats(baseStats);
         damageable = new Damageable(this, baseStats.MaxHealth);
         dealer = new DamageDealer(this);
-
-        // Enemy/legacy path: use testWeapon directly
-        if (testWeapon != null)
-        {
-            weaponHandler = new WeaponHandler(this, testWeapon);
-            primaryHandler = weaponHandler;
-        }
-
+        weaponHandler = new WeaponHandler(this, testWeapon);
         int moveSpeed = baseStats.MovementSpeed > 0 ? baseStats.MovementSpeed : 4;
         movement = new UnitMovement(this, moveSpeed);
         actionHandler = new UnitActionHandler(this);
         Events();
-    }
-
-    public void InitializeFromLoadout(ResolvedLoadout loadout)
-    {
-        primaryHandler = new WeaponHandler(this, loadout.PrimaryWeapon,
-            loadout.PrimaryAtWill, loadout.PrimaryEncounter, loadout.PrimaryUltimate);
-
-        secondaryHandler = new WeaponHandler(this, loadout.SecondaryWeapon,
-            loadout.SecondaryAtWill, loadout.SecondaryEncounter, loadout.SecondaryUltimate);
-
-        // Default weaponHandler to primary for backward compat
-        weaponHandler = primaryHandler;
-
-        utilityActions = new List<UnitAction>(loadout.UtilityActions);
-
-        activePassives = new List<PassiveEffect>(loadout.PassiveEffects);
-        foreach (var passive in activePassives)
-        {
-            passive.Apply(this);
-        }
-    }
-
-    /// <summary>
-    /// Returns all available actions across both weapons and utility, filtered by remaining AP.
-    /// </summary>
-    public List<UnitAction> GetAllAvailableActions(int remainingAP)
-    {
-        var actions = new List<UnitAction>();
-
-        if (primaryHandler != null)
-            actions.AddRange(primaryHandler.GetAvailableActions(remainingAP));
-        if (secondaryHandler != null)
-            actions.AddRange(secondaryHandler.GetAvailableActions(remainingAP));
-        if (utilityActions != null)
-        {
-            foreach (var action in utilityActions)
-            {
-                if (action != null && action.Cost <= remainingAP)
-                    actions.Add(action);
-            }
-        }
-
-        return actions;
     }
 
     protected virtual void Events()
@@ -121,8 +65,7 @@ public class Unit : MonoBehaviour
     [ContextMenu("TestAttack")]
     public void TestAttack()
     {
-        if (weaponHandler != null && weaponHandler.BasicAttack != null)
-            weaponHandler.SetAttackMode(weaponHandler.BasicAttack);
+        WeaponHandler.SetAttackMode(weaponHandler.Weapon.BasicAttack);
     }
 
 
@@ -131,6 +74,71 @@ public class Unit : MonoBehaviour
     {
         actionHandler.TakeWaitAction();
     }
+
+    #region Status Effects
+
+    public void AddStatusEffect(StatusEffects type, int stacks)
+    {
+        var config = GameManager.Instance.StatusEffectManager.Config;
+        int maxStacks = config.GetMaxStacks(type);
+
+        var existing = activeEffects.Find(e => e.Type == type);
+        if (existing != null)
+        {
+            existing.Stacks = Mathf.Min(existing.Stacks + stacks, maxStacks);
+        }
+        else
+        {
+            activeEffects.Add(new ActiveStatusEffect(type, Mathf.Min(stacks, maxStacks)));
+        }
+    }
+
+    public void RemoveStatusEffect(StatusEffects type)
+    {
+        bool hadStun = type == StatusEffects.Stun && HasStatus(StatusEffects.Stun);
+        activeEffects.RemoveAll(e => e.Type == type);
+
+        // If stun was cleansed mid-phase, re-enable the unit
+        if (hadStun)
+        {
+            actionHandler.OnStunCleansed();
+        }
+    }
+
+    public void TickStatusEffect(StatusEffects type)
+    {
+        var existing = activeEffects.Find(e => e.Type == type);
+        if (existing == null) return;
+
+        existing.Stacks -= 1;
+        if (existing.Stacks <= 0)
+        {
+            activeEffects.Remove(existing);
+        }
+    }
+
+    public int GetStatusStacks(StatusEffects type)
+    {
+        var existing = activeEffects.Find(e => e.Type == type);
+        return existing != null ? existing.Stacks : 0;
+    }
+
+    public bool HasStatus(StatusEffects type)
+    {
+        return activeEffects.Exists(e => e.Type == type && e.Stacks > 0);
+    }
+
+    public List<ActiveStatusEffect> GetActiveEffects()
+    {
+        return activeEffects;
+    }
+
+    public void SetActiveEffects(List<ActiveStatusEffect> effects)
+    {
+        activeEffects = effects;
+    }
+
+    #endregion
 }
 
 public enum ActiveMode

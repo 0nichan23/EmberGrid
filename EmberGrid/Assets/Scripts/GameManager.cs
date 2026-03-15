@@ -11,6 +11,7 @@ public class GameManager : MonoSingleton<GameManager>
     [SerializeField] private TurnManager turnManager;
     [SerializeField] private InputManager inputManager;
     [SerializeField] private RewindManager rewindManager;
+    [SerializeField] private StatusEffectManager statusEffectManager;
     private Utilities utils = new Utilities();
 
     public SelectionManager SelectionManager { get => selectionManager; }
@@ -21,4 +22,5 @@ public class GameManager : MonoSingleton<GameManager>
     public InputManager InputManager { get => inputManager; }
     public EnemiesManager EnemiesManager { get => enemiesManager; }
     public RewindManager RewindManager { get => rewindManager; }
+    public StatusEffectManager StatusEffectManager { get => statusEffectManager; }
 }

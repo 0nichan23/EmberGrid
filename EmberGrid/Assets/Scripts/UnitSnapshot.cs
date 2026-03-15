@@ -18,9 +18,17 @@ public class UnitSnapshot
     public int CriticalHitEx;
     public int DamageBonusEx;
     public Dictionary<DamageType, int> SpecificResistances;
+    public List<ActiveStatusEffect> ActiveEffects;
 
     public static UnitSnapshot Capture(Unit unit)
     {
+        // Deep copy status effects
+        var effectsCopy = new List<ActiveStatusEffect>();
+        foreach (var effect in unit.GetActiveEffects())
+        {
+            effectsCopy.Add(effect.Copy());
+        }
+
         return new UnitSnapshot
         {
             UnitRef = unit,
@@ -35,7 +43,8 @@ public class UnitSnapshot
             MagicalDefEx = unit.Stats.MagicalDefEx,
             CriticalHitEx = unit.Stats.CriticalHitEx,
             DamageBonusEx = unit.Stats.DamageBonusEx,
-            SpecificResistances = new Dictionary<DamageType, int>(unit.Stats.SpecificResistances)
+            SpecificResistances = new Dictionary<DamageType, int>(unit.Stats.SpecificResistances),
+            ActiveEffects = effectsCopy
         };
     }
 
@@ -78,5 +87,13 @@ public class UnitSnapshot
         unit.Stats.CriticalHitEx = CriticalHitEx;
         unit.Stats.DamageBonusEx = DamageBonusEx;
         unit.Stats.SetSpecificResistances(SpecificResistances);
+
+        // Restore status effects (deep copy to avoid sharing references)
+        var effectsCopy = new List<ActiveStatusEffect>();
+        foreach (var effect in ActiveEffects)
+        {
+            effectsCopy.Add(effect.Copy());
+        }
+        unit.SetActiveEffects(effectsCopy);
     }
 }
