@@ -33,16 +33,12 @@ public class Unit : MonoBehaviour
     public SpriteRenderer Visual { get => visual; }
     public ActiveMode CurrentMode { get => currentMode; set => currentMode = value; }
 
-    protected void SetWeaponHandler(WeaponHandler handler)
-    {
-        weaponHandler = handler;
-    }
-
     protected virtual void Start()
     {
         stats = new UnitStats(baseStats);
         damageable = new Damageable(this, baseStats.MaxHealth);
         dealer = new DamageDealer(this);
+        weaponHandler = new WeaponHandler(this);
         int moveSpeed = baseStats.MovementSpeed > 0 ? baseStats.MovementSpeed : 4;
         movement = new UnitMovement(this, moveSpeed);
         actionHandler = new UnitActionHandler(this);
