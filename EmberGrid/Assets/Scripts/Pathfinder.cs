@@ -15,7 +15,7 @@ public class Pathfinder
         }
 
         var openList = new Heap<TileSD>(map.Count);
-        var closedList = new List<TileSD>();
+        var closedList = new HashSet<TileSD>();
         TileSD currentTile;
         openList.Add(startingPoint);
         int imr = 0;

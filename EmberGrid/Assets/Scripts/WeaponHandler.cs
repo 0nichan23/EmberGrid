@@ -191,6 +191,7 @@ public class TargetedActionData
 
     private void AttackTargetedTile()
     {
+        if (hitbox == null) return;
         GameManager.Instance.RewindManager.CaptureSnapshot();
         GameManager.Instance.GridBuilder.HitTiles(owner, refAction, hitbox);
         owner.ActionHandler.ExpandAction();

@@ -25,6 +25,7 @@ public class EnemyPhaseController : MonoBehaviour
         foreach (Enemy enemy in cachedEnemies)
         {
             enemy.ActionHandler.BeginPhase();
+            enemy.Movement.ResetSpeed();
         }
         currentEnemy = 0;
         NextEnemyTurn();

@@ -17,6 +17,11 @@ public class StatusEffectConfig : ScriptableObject
 
     private Dictionary<StatusEffects, StatusEffectData> lookup;
 
+    private void OnValidate()
+    {
+        lookup = null;
+    }
+
     private void BuildLookup()
     {
         lookup = new Dictionary<StatusEffects, StatusEffectData>();
