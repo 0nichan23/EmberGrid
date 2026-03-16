@@ -17,8 +17,7 @@ public class Unit : MonoBehaviour
     [SerializeField] private WeaponHandler weaponHandler;
     [SerializeField] private UnitMovement movement;
     [SerializeField] private UnitActionHandler actionHandler;
-    [SerializeField] private SpriteRenderer visual; //temp
-    [SerializeField] private Weapon testWeapon;
+    [SerializeField] private SpriteRenderer visual;
     [SerializeField] private ActiveMode currentMode;
 
     private Dictionary<StatusEffects, StatusEffectInstance> activeInstances = new Dictionary<StatusEffects, StatusEffectInstance>();
@@ -44,7 +43,6 @@ public class Unit : MonoBehaviour
         stats = new UnitStats(baseStats);
         damageable = new Damageable(this, baseStats.MaxHealth);
         dealer = new DamageDealer(this);
-        weaponHandler = new WeaponHandler(this, testWeapon);
         int moveSpeed = baseStats.MovementSpeed > 0 ? baseStats.MovementSpeed : 4;
         movement = new UnitMovement(this, moveSpeed);
         actionHandler = new UnitActionHandler(this);
@@ -65,12 +63,6 @@ public class Unit : MonoBehaviour
     public void PositionCamOnUnit()
     {
         Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y, Camera.main.transform.position.z);
-    }
-
-    [ContextMenu("TestAttack")]
-    public void TestAttack()
-    {
-        WeaponHandler.SetAttackMode(weaponHandler.Weapon.BasicAttack);
     }
 
 

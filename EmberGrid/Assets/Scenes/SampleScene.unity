@@ -7505,7 +7505,7 @@ MonoBehaviour:
   visual: {fileID: 7348590944684969623}
   testWeapon: {fileID: 0}
   currentMode: 0
-  heroDefinition: {fileID: 0}
+  heroDefinition: {fileID: 11400000, guid: 8928c36e57f57354db58ef040512d666, type: 2}
 --- !u!114 &3798425684034315727
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7589,7 +7589,7 @@ MonoBehaviour:
   visual: {fileID: 7348590945426226253}
   testWeapon: {fileID: 0}
   currentMode: 0
-  heroDefinition: {fileID: 0}
+  heroDefinition: {fileID: 11400000, guid: 8928c36e57f57354db58ef040512d666, type: 2}
 --- !u!1 &4788304649903060591
 GameObject:
   m_ObjectHideFlags: 0

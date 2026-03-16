@@ -32,7 +32,7 @@ public class ActionBar : MonoBehaviour
         {
             gameObject.SetActive(true);
             //attack button setup
-            attackButton.onClick.AddListener(given.TestAttack);
+            //attackButton.onClick.AddListener(given.WeaponHandler.OpenAbilityPanel);
             waitButton.onClick.AddListener(given.ActionHandler.TakeWaitAction);
             moveButton.onClick.AddListener(given.Movement.SetMovementMode);
         }

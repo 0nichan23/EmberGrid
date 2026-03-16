@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Enemy : Unit
 {
+    [SerializeField] private Weapon testWeapon;
     private EnemyAI enemyAI;
 
     public EnemyAI EnemyAI { get => enemyAI;  }
@@ -11,6 +12,7 @@ public class Enemy : Unit
     protected override void Start()
     {
         base.Start();
+        WeaponHandler.CacheAction(testWeapon.BasicAttack);
         enemyAI = new EnemyAI(this);
     }
 
@@ -19,5 +21,4 @@ public class Enemy : Unit
         OnTurnEnded.AddListener(() => CurrentMode = ActiveMode.Unselected);
         OnDeselected.AddListener(() => CurrentMode = ActiveMode.Unselected);
     }
-
 }

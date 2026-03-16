@@ -6,77 +6,37 @@ using UnityEngine;
 [System.Serializable]
 public class WeaponHandler
 {
-    [SerializeField] private Weapon weapon;
     private Unit owner;
     private TargetedActionData currentTargetData;
 
-    private UnitAction basicAttack;
-    private UnitAction encounter;
-    private UnitAction ultimate;
-
-    public Weapon Weapon { get => weapon; }
-    public UnitAction BasicAttack { get => basicAttack; }
-    public UnitAction Encounter { get => encounter; }
-    public UnitAction Ultimate { get => ultimate; }
-
-    // Legacy constructor for enemies (reads abilities directly from weapon)
-    public WeaponHandler(Unit givenUnit, Weapon weapon)
+    private List<UnitAction> actions;
+    private List<Weapon> weapons;
+    public WeaponHandler(Unit givenUnit)
     {
-        this.weapon = weapon;
-        owner = givenUnit;
-        owner.OnDeselected.AddListener(CancelAttackMode);
-
-        basicAttack = weapon.BasicAttack;
-        encounter = (weapon.Encounters != null && weapon.Encounters.Length > 0)
-            ? weapon.Encounters[0] : null;
-        ultimate = weapon.Daily;
-    }
-
-    // New constructor for heroes (takes resolved abilities from skill tree)
-    public WeaponHandler(Unit givenUnit, Weapon weapon,
-        UnitAction basicAttack, UnitAction encounter, UnitAction ultimate)
-    {
-        this.weapon = weapon;
-        this.basicAttack = basicAttack;
-        this.encounter = encounter;
-        this.ultimate = ultimate;
+        actions = new List<UnitAction>();
+        weapons = new List<Weapon>();
         owner = givenUnit;
         owner.OnDeselected.AddListener(CancelAttackMode);
     }
 
     public List<UnitAction> GetAvailableActions(int remainingAP)
     {
-        var list = new List<UnitAction>();
-
-        if (basicAttack != null) list.Add(basicAttack);
-        if (encounter != null) list.Add(encounter);
-        if (ultimate != null) list.Add(ultimate);
-
-        return list.Where(a => a.Cost <= remainingAP).ToList();
+        return actions.Where(a => a.Cost <= remainingAP).ToList();
     }
 
-    //for enemies.
+    public void CacheAction(UnitAction given)
+    {
+        if (given != null && !actions.Contains(given))
+        {
+            actions.Add(given);
+        }
+    }
+
     public void ExecuteActionAt(UnitAction action, Direction dir, TileSD sourceTile)
     {
         var hitbox = GameManager.Instance.GridBuilder.Targeter.GetHitbox(action, dir, sourceTile.Pos);
         GameManager.Instance.GridBuilder.HitTiles(owner, action, hitbox);
         owner.ActionHandler.ExpandAction();
-    }
-
-
-    public int GetBasicAttackDamage()
-    {
-        if (basicAttack == null) return 0;
-
-        int total = 0;
-        foreach (var item in basicAttack.Effects)
-        {
-            if (item is DamageAE damageAE)
-            {
-                total += damageAE.GetDamageFromUnit(owner);
-            }
-        }
-        return total;
     }
 
     public void SetAttackMode(UnitAction action)
@@ -93,7 +53,6 @@ public class WeaponHandler
         currentTargetData = new TargetedActionData(reach, action, owner, Direction.Right);
     }
 
-
     public void CancelAttackMode()
     {
         if (!ReferenceEquals(currentTargetData, null))
@@ -102,7 +61,6 @@ public class WeaponHandler
             currentTargetData = null;
         }
     }
-
 }
 
 public class TargetedActionData

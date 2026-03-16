@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Jobs;
 
 public class Hero : Unit
 {
@@ -27,16 +28,20 @@ public class Hero : Unit
 
     private void ApplyLoadout()
     {
-        if (loadout == null) return;
+        if (loadout == null)
+            return;
 
-        // Replace the default WeaponHandler with one using resolved abilities
-        if (loadout.PrimaryWeapon != null)
+        WeaponHandler.CacheAction(loadout.PrimaryAtWill);
+        WeaponHandler.CacheAction(loadout.PrimaryEncounter);
+        WeaponHandler.CacheAction(loadout.PrimaryUltimate);
+        WeaponHandler.CacheAction(loadout.SecondaryAtWill);
+        WeaponHandler.CacheAction(loadout.SecondaryEncounter);
+        WeaponHandler.CacheAction(loadout.SecondaryUltimate);
+
+        foreach (var item in loadout.UtilityActions)
         {
-            var wh = new WeaponHandler(this, loadout.PrimaryWeapon,
-                loadout.PrimaryAtWill, loadout.PrimaryEncounter, loadout.PrimaryUltimate);
-            SetWeaponHandler(wh);
+            WeaponHandler.CacheAction(item);
         }
-
         // Apply class passives
         foreach (var passive in loadout.PassiveEffects)
         {
