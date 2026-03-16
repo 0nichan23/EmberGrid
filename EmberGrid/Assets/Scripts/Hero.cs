@@ -21,7 +21,6 @@ public class Hero : Unit
         if (progression != null)
         {
             loadout = ResolvedLoadout.Resolve(progression);
-            InitializeFromLoadout(loadout);
         }
     }
 
