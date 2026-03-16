@@ -36,7 +36,7 @@ public class ResolvedLoadout
 
         // Resolve primary weapon
         loadout.primaryWeapon = progression.SelectedPrimary;
-        if (loadout.primaryWeapon.SkillTree != null)
+        if (loadout.primaryWeapon != null && loadout.primaryWeapon.SkillTree != null)
         {
             var tree = loadout.primaryWeapon.SkillTree;
             loadout.primaryAtWill = ResolveAbilityFromLine(
@@ -46,10 +46,18 @@ public class ResolvedLoadout
             loadout.primaryUltimate = ResolveAbilityFromLine(
                 tree.UltimateLine, progression.PrimaryWeaponSelections, 2, level);
         }
+        else if (loadout.primaryWeapon != null)
+        {
+            // Fallback to direct abilities if no skill tree
+            loadout.primaryAtWill = loadout.primaryWeapon.BasicAttack;
+            loadout.primaryEncounter = (loadout.primaryWeapon.Encounters != null && loadout.primaryWeapon.Encounters.Length > 0)
+                ? loadout.primaryWeapon.Encounters[0] : null;
+            loadout.primaryUltimate = loadout.primaryWeapon.Daily;
+        }
 
         // Resolve secondary weapon
         loadout.secondaryWeapon = progression.SelectedSecondary;
-        if (loadout.secondaryWeapon.SkillTree != null)
+        if (loadout.secondaryWeapon != null && loadout.secondaryWeapon.SkillTree != null)
         {
             var tree = loadout.secondaryWeapon.SkillTree;
             loadout.secondaryAtWill = ResolveAbilityFromLine(
@@ -58,6 +66,13 @@ public class ResolvedLoadout
                 tree.EncounterLine, progression.SecondaryWeaponSelections, 1, level);
             loadout.secondaryUltimate = ResolveAbilityFromLine(
                 tree.UltimateLine, progression.SecondaryWeaponSelections, 2, level);
+        }
+        else if (loadout.secondaryWeapon != null)
+        {
+            loadout.secondaryAtWill = loadout.secondaryWeapon.BasicAttack;
+            loadout.secondaryEncounter = (loadout.secondaryWeapon.Encounters != null && loadout.secondaryWeapon.Encounters.Length > 0)
+                ? loadout.secondaryWeapon.Encounters[0] : null;
+            loadout.secondaryUltimate = loadout.secondaryWeapon.Daily;
         }
 
         // Resolve utility
@@ -76,7 +91,7 @@ public class ResolvedLoadout
         // Resolve class passives
         loadout.passiveEffects = new List<PassiveEffect>();
         var classTree = progression.Definition.ClassTree;
-        if (classTree != null)
+        if (classTree != null && classTree.BaseLines != null)
         {
             // Base tree
             for (int i = 0; i < classTree.BaseLines.Length; i++)

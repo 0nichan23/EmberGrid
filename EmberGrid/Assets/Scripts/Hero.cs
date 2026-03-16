@@ -21,6 +21,26 @@ public class Hero : Unit
         if (progression != null)
         {
             loadout = ResolvedLoadout.Resolve(progression);
+            ApplyLoadout();
+        }
+    }
+
+    private void ApplyLoadout()
+    {
+        if (loadout == null) return;
+
+        // Replace the default WeaponHandler with one using resolved abilities
+        if (loadout.PrimaryWeapon != null)
+        {
+            var wh = new WeaponHandler(this, loadout.PrimaryWeapon,
+                loadout.PrimaryAtWill, loadout.PrimaryEncounter, loadout.PrimaryUltimate);
+            SetWeaponHandler(wh);
+        }
+
+        // Apply class passives
+        foreach (var passive in loadout.PassiveEffects)
+        {
+            passive.Apply(this);
         }
     }
 

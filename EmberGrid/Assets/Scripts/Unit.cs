@@ -34,6 +34,11 @@ public class Unit : MonoBehaviour
     public SpriteRenderer Visual { get => visual; }
     public ActiveMode CurrentMode { get => currentMode; set => currentMode = value; }
 
+    protected void SetWeaponHandler(WeaponHandler handler)
+    {
+        weaponHandler = handler;
+    }
+
     protected virtual void Start()
     {
         stats = new UnitStats(baseStats);

@@ -29,11 +29,18 @@ public class HeroProgression
     public int SelectedSpecIndex { get => selectedSpecIndex; set => selectedSpecIndex = value; }
     public TreeSelections ClassSpecSelections { get => classSpecSelections; }
 
-    public Weapon SelectedPrimary => definition.PrimaryWeapons[selectedPrimaryIndex];
-    public Weapon SelectedSecondary => definition.SecondaryWeapons[selectedSecondaryIndex];
+    public Weapon SelectedPrimary =>
+        definition.PrimaryWeapons != null && selectedPrimaryIndex >= 0 && selectedPrimaryIndex < definition.PrimaryWeapons.Length
+            ? definition.PrimaryWeapons[selectedPrimaryIndex] : null;
+    public Weapon SelectedSecondary =>
+        definition.SecondaryWeapons != null && selectedSecondaryIndex >= 0 && selectedSecondaryIndex < definition.SecondaryWeapons.Length
+            ? definition.SecondaryWeapons[selectedSecondaryIndex] : null;
     public Weapon Utility => definition.UtilityItem;
     public SpecializationTree SelectedSpec =>
-        selectedSpecIndex >= 0 ? definition.ClassTree.Specializations[selectedSpecIndex] : null;
+        selectedSpecIndex >= 0 && definition.ClassTree != null
+        && definition.ClassTree.Specializations != null
+        && selectedSpecIndex < definition.ClassTree.Specializations.Length
+            ? definition.ClassTree.Specializations[selectedSpecIndex] : null;
 
     public HeroProgression(HeroDefinition definition)
     {
