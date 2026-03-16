@@ -21,7 +21,7 @@ public class Unit : MonoBehaviour
     [SerializeField] private Weapon testWeapon;
     [SerializeField] private ActiveMode currentMode;
 
-    private List<ActiveStatusEffect> activeEffects = new List<ActiveStatusEffect>();
+    private Dictionary<StatusEffects, StatusEffectInstance> activeInstances = new Dictionary<StatusEffects, StatusEffectInstance>();
 
     public DamageDealer Dealer { get => dealer; }
     public Damageable Damageable { get => damageable; }
@@ -84,24 +84,33 @@ public class Unit : MonoBehaviour
 
     public void AddStatusEffect(StatusEffects type, int stacks)
     {
-        var config = GameManager.Instance.StatusEffectManager.Config;
+        var manager = GameManager.Instance.StatusEffectManager;
+        var config = manager.Config;
         int maxStacks = config.GetMaxStacks(type);
 
-        var existing = activeEffects.Find(e => e.Type == type);
-        if (existing != null)
+        if (activeInstances.TryGetValue(type, out var existing))
         {
             existing.Stacks = Mathf.Min(existing.Stacks + stacks, maxStacks);
         }
         else
         {
-            activeEffects.Add(new ActiveStatusEffect(type, Mathf.Min(stacks, maxStacks)));
+            var instance = manager.CreateInstance(this, type, Mathf.Min(stacks, maxStacks));
+            if (instance != null)
+            {
+                activeInstances[type] = instance;
+                instance.OnApplied();
+            }
         }
     }
 
     public void RemoveStatusEffect(StatusEffects type)
     {
-        bool hadStun = type == StatusEffects.Stun && HasStatus(StatusEffects.Stun);
-        activeEffects.RemoveAll(e => e.Type == type);
+        if (!activeInstances.TryGetValue(type, out var instance)) return;
+
+        bool hadStun = type == StatusEffects.Stun;
+
+        instance.OnRemoved();
+        activeInstances.Remove(type);
 
         // If stun was cleansed mid-phase, re-enable the unit
         if (hadStun)
@@ -110,37 +119,47 @@ public class Unit : MonoBehaviour
         }
     }
 
-    public void TickStatusEffect(StatusEffects type)
-    {
-        var existing = activeEffects.Find(e => e.Type == type);
-        if (existing == null) return;
-
-        existing.Stacks -= 1;
-        if (existing.Stacks <= 0)
-        {
-            activeEffects.Remove(existing);
-        }
-    }
-
     public int GetStatusStacks(StatusEffects type)
     {
-        var existing = activeEffects.Find(e => e.Type == type);
-        return existing != null ? existing.Stacks : 0;
+        return activeInstances.TryGetValue(type, out var instance) ? instance.Stacks : 0;
     }
 
     public bool HasStatus(StatusEffects type)
     {
-        return activeEffects.Exists(e => e.Type == type && e.Stacks > 0);
+        return activeInstances.TryGetValue(type, out var instance) && instance.Stacks > 0;
     }
 
+    /// <summary>
+    /// Builds a serializable list from the active instances (for snapshots/rewind).
+    /// </summary>
     public List<ActiveStatusEffect> GetActiveEffects()
     {
-        return activeEffects;
+        var list = new List<ActiveStatusEffect>();
+        foreach (var kvp in activeInstances)
+        {
+            list.Add(kvp.Value.ToSerializable());
+        }
+        return list;
     }
 
+    /// <summary>
+    /// Tears down all current instances and rebuilds from a serializable list (for rewind/restore).
+    /// </summary>
     public void SetActiveEffects(List<ActiveStatusEffect> effects)
     {
-        activeEffects = effects;
+        // Remove all current instances (unsubscribe from events)
+        foreach (var kvp in activeInstances)
+        {
+            kvp.Value.OnRemoved();
+        }
+        activeInstances.Clear();
+
+        // Rebuild from serializable data
+        if (effects == null) return;
+        foreach (var effect in effects)
+        {
+            AddStatusEffect(effect.Type, effect.Stacks);
+        }
     }
 
     #endregion

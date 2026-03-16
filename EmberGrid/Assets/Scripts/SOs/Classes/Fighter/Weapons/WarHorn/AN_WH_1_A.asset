@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c863f1d66a798fa45b4194c34e37212a, type: 3}
+  m_Name: AN_WH_1_A
+  m_EditorClassIdentifier:
+  nodeName: Rallying Cry
+  description: Grants haste to self
+  icon: {fileID: 0}
+  grantedAction: {fileID: 11400000, guid: 12964ce5a6ebd1a286782a2af0e2201f, type: 2}

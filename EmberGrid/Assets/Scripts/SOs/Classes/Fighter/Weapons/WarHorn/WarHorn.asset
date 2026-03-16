@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10bd480f3aeccd84b878a36cbf7e1846, type: 3}
+  m_Name: WarHorn
+  m_EditorClassIdentifier: Assembly-CSharp::Weapon
+  weaponName: War Horn
+  icon: {fileID: 0}
+  skillTree: {fileID: 0}
+  utilityTree: {fileID: 11400000, guid: 094303c18a595ffad3b0492b9370f45a, type: 2}
+  basicAttack: {fileID: 0}
+  encounters: []
+  ultimate: {fileID: 0}

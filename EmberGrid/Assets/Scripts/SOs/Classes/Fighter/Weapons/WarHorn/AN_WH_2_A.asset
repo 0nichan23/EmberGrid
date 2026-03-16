@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c863f1d66a798fa45b4194c34e37212a, type: 3}
+  m_Name: AN_WH_2_A
+  m_EditorClassIdentifier:
+  nodeName: Battle Hymn
+  description: Grants stride to self
+  icon: {fileID: 0}
+  grantedAction: {fileID: 11400000, guid: 5bfc80eef3cf16c4ee8192f97f0d9bb6, type: 2}

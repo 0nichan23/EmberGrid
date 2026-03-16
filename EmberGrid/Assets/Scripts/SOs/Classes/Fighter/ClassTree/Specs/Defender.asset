@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e896967827f21ca4c9fbe321f0d5c0d0, type: 3}
+  m_Name: Defender
+  m_EditorClassIdentifier:
+  specName: Defender
+  specDescription: Defensive specialist focused on resilience
+  specIcon: {fileID: 0}
+  specLines:
+  - {fileID: 11400000, guid: 3950486e797ea33a5183f1b54d7b2d99, type: 2}
+  - {fileID: 11400000, guid: 67f3954f472d3497e172919ecc42e918, type: 2}

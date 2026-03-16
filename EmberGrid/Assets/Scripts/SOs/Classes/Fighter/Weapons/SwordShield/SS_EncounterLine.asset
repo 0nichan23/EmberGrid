@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ff5ee58c7080014884583efe7940c00, type: 3}
+  m_Name: SS_EncounterLine
+  m_EditorClassIdentifier:
+  lineName: Encounter
+  requiredLevel: 3
+  choices:
+  - {fileID: 11400000, guid: 5324dd6e4eef578e6e946a8acb2c0854, type: 2}
+  - {fileID: 11400000, guid: e1ba77500d404c8f45e58208fce3d4c0, type: 2}

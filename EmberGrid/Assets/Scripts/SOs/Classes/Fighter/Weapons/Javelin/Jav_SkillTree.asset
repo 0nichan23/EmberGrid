@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d55834f06f94594a87271d64dc89ac5, type: 3}
+  m_Name: Jav_SkillTree
+  m_EditorClassIdentifier:
+  atWillLine: {fileID: 11400000, guid: e32f503ef689b31252e7553355ab801f, type: 2}
+  encounterLine: {fileID: 11400000, guid: 0f0dc82af91c2231f778855c4d5e9fe4, type: 2}
+  ultimateLine: {fileID: 11400000, guid: a7ba3270201410eacbca6acbf55b51dd, type: 2}
