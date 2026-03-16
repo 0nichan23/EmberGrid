@@ -44,16 +44,6 @@ public class Damageable
     {
         OnTakeDamage?.Invoke(handler, dealer.Dealer, this);
         dealer.Dealer?.OnDealDamage?.Invoke(handler, dealer.Dealer, this);
-
-        // Shock amplification: increases direct damage taken
-        int shockStacks = owner.GetStatusStacks(StatusEffects.Shock);
-        if (shockStacks > 0)
-        {
-            float shockPercent = GameManager.Instance.StatusEffectManager.Config.GetValue(StatusEffects.Shock);
-            float shockMod = 1f + (shockPercent / 100f * shockStacks);
-            handler.AddMod(shockMod);
-        }
-
         int finalDamge = handler.GetFinalDamage();
         currentHealth -= finalDamge;
         ClampHp();

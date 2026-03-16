@@ -35,11 +35,9 @@ public class UnitMovement
             effective *= 2;
         }
 
-        // Chill halves movement per stack (50% reduction per stack)
-        int chillStacks = owner.GetStatusStacks(StatusEffects.Chill);
-        for (int i = 0; i < chillStacks; i++)
+        if (owner.HasStatus(StatusEffects.Chill))
         {
-            effective = Mathf.CeilToInt(effective * 0.5f);
+            effective /= 2;
         }
 
         return Mathf.Max(effective, 0);
@@ -49,7 +47,6 @@ public class UnitMovement
     {
         speedLeft = GetEffectiveSpeed();
     }
-
 
     public void CancelMovementMode()
     {
@@ -118,9 +115,6 @@ public class UnitMovement
         currentReach = reachables.ToArray();
     }
 
-
-
-
     private void MoveUnitToTile(TileSD tile)
     {
         GameManager.Instance.RewindManager.CaptureSnapshot();
@@ -148,7 +142,6 @@ public class UnitMovement
         owner.transform.position = new Vector3Int(tile.Pos.x, tile.Pos.y, 0);
         tile.SubUnit(owner);
     }
-
 
     private IEnumerator WalkAlongPath(List<TileSD> path)
     {
