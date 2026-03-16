@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: TestHero
   m_EditorClassIdentifier: Assembly-CSharp::HeroDefinition
   className: 
-  baseStats: {fileID: 0}
-  primaryWeapons: []
+  baseStats: {fileID: 11400000, guid: 1efb72a2396cc1443b65a554caed2c66, type: 2}
+  primaryWeapons:
+  - {fileID: 11400000, guid: 5432939ee3e53e1478fbf6a411e6f24e, type: 2}
   secondaryWeapons: []
   utilityItem: {fileID: 0}
   classTree: {fileID: 0}

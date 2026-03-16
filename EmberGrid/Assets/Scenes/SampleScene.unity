@@ -3303,6 +3303,7 @@ MonoBehaviour:
   turnManager: {fileID: 1553088236}
   inputManager: {fileID: 1444974753}
   rewindManager: {fileID: 1344096421}
+  statusEffectManager: {fileID: 2040297841}
 --- !u!4 &1022305383
 Transform:
   m_ObjectHideFlags: 0
@@ -3324,6 +3325,7 @@ Transform:
   - {fileID: 99278553}
   - {fileID: 1097117721}
   - {fileID: 1344096422}
+  - {fileID: 2040297842}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1090070497
@@ -6880,6 +6882,51 @@ MonoBehaviour:
     units:
     - {fileID: 3798425684034315727}
     - {fileID: 3798425683433379605}
+--- !u!1 &2040297840
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2040297842}
+  - component: {fileID: 2040297841}
+  m_Layer: 0
+  m_Name: StatusEffectsManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2040297841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2040297840}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec1d769a9893b5645872e20ed965f619, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StatusEffectManager
+  config: {fileID: 11400000, guid: d7c3cfbdac4068d42b9e99af3e2b635f, type: 2}
+--- !u!4 &2040297842
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2040297840}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1022305383}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2045123770
 GameObject:
   m_ObjectHideFlags: 0
@@ -7456,8 +7503,9 @@ MonoBehaviour:
         m_Calls: []
     actionPoints: 0
   visual: {fileID: 7348590944684969623}
-  testWeapon: {fileID: 11400000, guid: b82cfd5f121a0a040a40938fed7800d9, type: 2}
+  testWeapon: {fileID: 0}
   currentMode: 0
+  heroDefinition: {fileID: 0}
 --- !u!114 &3798425684034315727
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7539,8 +7587,9 @@ MonoBehaviour:
         m_Calls: []
     actionPoints: 0
   visual: {fileID: 7348590945426226253}
-  testWeapon: {fileID: 11400000, guid: b82cfd5f121a0a040a40938fed7800d9, type: 2}
+  testWeapon: {fileID: 0}
   currentMode: 0
+  heroDefinition: {fileID: 0}
 --- !u!1 &4788304649903060591
 GameObject:
   m_ObjectHideFlags: 0
