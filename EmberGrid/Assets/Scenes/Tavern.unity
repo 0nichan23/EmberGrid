@@ -252,7 +252,7 @@ GameObject:
   - component: {fileID: 148363716}
   - component: {fileID: 148363715}
   m_Layer: 5
-  m_Name: Image
+  m_Name: Primary
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1033,7 +1033,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 9.313308}
-  m_SizeDelta: {x: 113.8068, y: 357.0871}
+  m_SizeDelta: {x: 109.5115, y: 357.0871}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &1092680702
 CanvasRenderer:
@@ -1207,7 +1207,7 @@ GameObject:
   - component: {fileID: 1136726526}
   - component: {fileID: 1136726525}
   m_Layer: 5
-  m_Name: Image (1)
+  m_Name: Secondary
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1386,7 +1386,7 @@ GameObject:
   - component: {fileID: 1461107906}
   - component: {fileID: 1461107905}
   m_Layer: 5
-  m_Name: Image (2)
+  m_Name: Utility
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2435,7 +2435,7 @@ GameObject:
   - component: {fileID: 2013658646}
   - component: {fileID: 2013658647}
   m_Layer: 5
-  m_Name: Weapons
+  m_Name: Gear
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
